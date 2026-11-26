@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1116">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WRABF Alvos">
+<title>NSN WRABF · Alvos</title>
+<link rel="apple-touch-icon" id="touchIcon" href="">
+<link rel="manifest" id="manifestLink" href="">
+<style>
+:root{--bg:#0e1116;--card:#171c24;--line:#2a3240;--tx:#e9eef5;--mut:#9aa6b6;--acc:#ffcc33;--ok:#3ecf8e;--warn:#ffb020;--bad:#ff5d5d;--blu:#4ea1ff;--pur:#b48cff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:20;background:#0b0e13;border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.top{display:flex;align-items:center;gap:8px;padding:8px 12px}
+.top h1{font-size:17px;margin:0;flex:1}
+.top .tag{font-size:12px;color:#111;background:var(--acc);border-radius:6px;padding:2px 6px;font-weight:700}
+nav{display:flex;overflow-x:auto;gap:6px;padding:0 10px 10px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:20px;padding:8px 14px;font-size:15px}
+nav button.on{background:var(--acc);color:#111;border-color:var(--acc);font-weight:700}
+main{padding:12px;max-width:720px;margin:0 auto;padding-bottom:100px}
+.tab{display:none}.tab.on{display:block}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+h2{font-size:18px;margin:0 0 10px}h3{font-size:16px;margin:14px 0 6px;color:var(--acc)}
+label{display:block;font-size:14px;color:var(--mut);margin:8px 0 4px}
+input,select,textarea{width:100%;background:#0b0e13;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:11px;font-size:16px;font-family:inherit}
+textarea{min-height:80px}
+.row{display:flex;gap:8px;align-items:flex-end}.row>*{flex:1;min-width:0}
+.mt{margin-top:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:50px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#222a36;color:var(--tx);font-size:16px;font-weight:600;cursor:pointer;width:100%;text-align:center;font-family:inherit}
+.btn.pri{background:var(--acc);color:#111;border-color:var(--acc)}
+.btn.ok{background:var(--ok);color:#06140d;border-color:var(--ok)}
+.btn.bad{background:#3a1a1d;color:#ffb3b3;border-color:#6a2a30}
+.btn.sm{min-height:42px;font-size:14px;padding:6px 8px}
+.btn.on{outline:3px solid var(--acc)}
+.btn:disabled{opacity:.4}
+.note{font-size:13px;color:var(--mut)}
+.warn{background:#3a2a08;border:1px solid #7a5a10;color:#ffd98a;border-radius:10px;padding:10px;font-size:14px;margin:8px 0}
+.alert{background:#3a1216;border:1px solid #803040;color:#ffc0c8;border-radius:10px;padding:10px;font-size:14px;margin:8px 0}
+.okbox{background:#10291c;border:1px solid #2b6a46;color:#b8f0d2;border-radius:10px;padding:10px;font-size:14px;margin:8px 0}
+.steps{display:flex;gap:4px;margin-bottom:10px}.steps span{flex:1;height:6px;border-radius:3px;background:var(--line)}.steps span.on{background:var(--acc)}
+canvas{display:block;max-width:100%;touch-action:none;border-radius:10px;background:#000}
+.cvwrap{position:relative;user-select:none;-webkit-user-select:none}
+.loupe{position:absolute;pointer-events:none;border:3px solid var(--acc);border-radius:50%;display:none;box-shadow:0 4px 20px #000c;width:150px;height:150px;background:#000;z-index:5}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.grid5 button,.grid5 div{min-height:46px;border-radius:8px;border:1px solid var(--line);background:#0b0e13;color:var(--tx);font-weight:700;font-size:17px;position:relative;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.grid5 small{position:absolute;top:2px;left:4px;font-size:10px;color:var(--mut);font-weight:400}
+.grid5 i{position:absolute;bottom:1px;right:4px;font-size:10px;font-style:normal;color:var(--warn)}
+.grid5 .done{background:#12301f;border-color:#2b6a46}
+.grid5 .duv{background:#3a2e0a;border-color:#8a6a10}
+.grid5 .man{background:#2a1f42;border-color:#6a50a0}
+.grid5 .zero{background:#3a1216;border-color:#803040}
+.grid5 .xx{color:var(--acc)}
+.grid5 .cur{outline:3px solid var(--acc);outline-offset:1px}
+.totbar{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));z-index:10;background:#000e;border:1px solid var(--acc);border-radius:12px;padding:10px 12px;margin:10px 0;font-size:16px;text-align:center}
+.totbar b{color:var(--acc);font-size:20px}
+.big{font-size:36px;font-weight:800;color:var(--acc);line-height:1}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--mut);font-weight:600}
+.item{display:flex;gap:10px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.item img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex:0 0 64px;background:#000}
+.item .sc{font-size:24px;font-weight:800;color:var(--acc);min-width:58px;text-align:right}
+.chk{display:flex;align-items:center;gap:8px;color:var(--tx);font-size:15px;margin:10px 0}
+.chk input{width:22px;height:22px}
+.pill{display:inline-block;font-size:12px;border:1px solid var(--line);border-radius:10px;padding:1px 7px;color:var(--mut);margin-right:4px}
+.arrows{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:240px;margin:8px auto}
+details summary{cursor:pointer;color:var(--blu);padding:8px 0}
+#toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#000e;border:1px solid var(--line);padding:12px 18px;border-radius:12px;display:none;z-index:99;max-width:90%;text-align:center}
+.eqi{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.eqi div{flex:1;font-size:15px}.eqi small{color:var(--mut)}
+.eqi button{width:42px;min-height:40px}
+#printArea{display:none}
+@media print{
+ body>*:not(#printArea){display:none!important}
+ html,body{background:#fff;color:#000}
+ #printArea{display:block!important;color:#000;font:10pt/1.35 Arial,Helvetica,sans-serif}
+ .pr h1{font-size:15pt;margin:0 0 4pt}.pr .sub{font-size:9pt;color:#333;margin-bottom:6pt}
+ .pr table{border-collapse:collapse;width:100%;margin:4pt 0}
+ .pr td,.pr th{border:1px solid #999;padding:3pt 4pt;font-size:9pt;color:#000;text-align:left}
+ .pr .g5 td{text-align:center;font-size:12pt;font-weight:700;width:20%;position:relative;height:24pt}
+ .pr .g5 small{position:absolute;top:1pt;left:2pt;font-size:6pt;font-weight:400;color:#555}
+ .pr .tot{font-size:16pt;font-weight:800;margin:6pt 0}
+ .pr img{max-width:100%}
+ .pr .disc{font-size:7.5pt;color:#555;margin-top:6pt}
+ .pc{font-size:8pt}.pc h1{font-size:11pt}.pc .g5 td{font-size:10pt;height:15pt}.pc .tot{font-size:14pt;margin:3pt 0}.pc td,.pc th{font-size:7.5pt;padding:1.5pt 3pt}
+}
+</style>
+<style id="pageStyle"></style>
+</head>
+<body>
+<header>
+ <div class="top"><h1>🎯 NSN WRABF · Alvos</h1><span class="tag">modo A</span></div>
+ <nav id="tabs">
+  <button data-tab="novo" class="on">Novo cartão</button>
+  <button data-tab="hist">Histórico</button>
+  <button data-tab="evo">Evolução</button>
+  <button data-tab="comp">Comparativos</button>
+  <button data-tab="calor">Mapa de calor</button>
+  <button data-tab="equip">Equipamentos</button>
+  <button data-tab="backup">Backup</button>
+ </nav>
+</header>
+<main>
+
+<!-- ============ NOVO CARTÃO ============ -->
+<section id="tab-novo" class="tab on">
+ <div id="draftBanner" class="warn" hidden>
+  Há um cartão em andamento neste aparelho.
+  <div class="row mt"><button class="btn sm pri" id="bDraftGo">Continuar</button><button class="btn sm" id="bDraftDrop">Descartar</button></div>
+ </div>
+ <div class="steps" id="stepBar"><span></span><span></span><span></span><span></span><span></span></div>
+
+ <!-- Passo 1 -->
+ <div class="step" id="st1">
+  <div class="box">
+   <h2>1 · Foto do cartão</h2>
+   <div class="row"><div><label>Categoria</label><select id="fCat"></select></div><div><label>Data</label><input type="date" id="fData"></div></div>
+   <div class="row"><div><label>Calibre</label><select id="fCal"></select></div><div><label>Plug de apuração</label><select id="fPlug"></select></div></div>
+   <p class="note" id="plugNote"></p>
+   <div class="row mt">
+    <label class="btn pri">📷 Tirar foto<input type="file" accept="image/*" capture="environment" id="inCam" hidden></label>
+    <label class="btn">🖼️ Galeria<input type="file" accept="image/*" id="inGal" hidden></label>
+   </div>
+   <p class="note">Dica: foto de frente, cartão ocupando a tela, fundo escuro atrás (furos escuros) e sem reflexo de flash nas faixas azuis. Nome no padrão <b>AR-LV-20260829.jpg</b> preenche categoria e data sozinho.</p>
+  </div>
+  <div class="box note">Leitura <b>assistida</b>: o app corrige a perspectiva e encaixa os anéis oficiais; você toca no centro de cada furo e o app pontua (melhor borda, regra WRABF).<br><b>Leitura por foto é uma aproximação, não apuração oficial.</b> Na dúvida, confira com o plug.</div>
+ </div>
+
+ <!-- Passo 2 -->
+ <div class="step" id="st2" hidden>
+  <div class="box">
+   <h2>2 · Encaixar a grade</h2>
+   <p class="note">Arraste cada ponto amarelo para o <b>centro (pontinho do 10)</b> dos alvos <b>1, 5, 21 e 25</b>. As cruzes azuis mostram onde o app espera os outros 21 centros.</p>
+   <div class="cvwrap" id="wrapC"><canvas id="cvC"></canvas><canvas id="loupeC" class="loupe" width="300" height="300"></canvas></div>
+   <div class="row mt"><button class="btn sm" id="bRot">↻ Girar 90°</button><button class="btn sm" id="bResetC">Recolocar pontos</button></div>
+   <div class="row mt"><button class="btn" data-go="1">◀ Voltar</button><button class="btn pri" id="bToSt3">Continuar ▶</button></div>
+  </div>
+ </div>
+
+ <!-- Passo 3 -->
+ <div class="step" id="st3" hidden>
+  <div class="box">
+   <h2>3 · Conferir os anéis</h2>
+   <p class="note">Imagem já corrigida. O anel do <b>6</b> (azul claro, mais grosso) deve cair sobre a linha azul grossa impressa. Se ficar maior ou menor, ajuste o passo da grade (é guardado para as próximas vezes). Toque num alvo para ir direto a ele.</p>
+   <div class="cvwrap"><canvas id="cvO" width="600" height="600"></canvas></div>
+   <label>Escala (passo da grade)</label>
+   <input type="range" id="pRange" min="25" max="90" step="0.1">
+   <div class="row">
+    <div><label>Horizontal (mm)</label><div class="row"><button class="btn sm" data-pp="x,-0.1">−</button><input type="number" id="pX" step="0.1" inputmode="decimal"><button class="btn sm" data-pp="x,0.1">+</button></div></div>
+   </div>
+   <div class="row">
+    <div><label>Vertical (mm)</label><div class="row"><button class="btn sm" data-pp="y,-0.1">−</button><input type="number" id="pY" step="0.1" inputmode="decimal"><button class="btn sm" data-pp="y,0.1">+</button></div></div>
+   </div>
+   <p class="note">Passo = distância entre os centros de dois alvos vizinhos.</p>
+   <div class="row mt"><button class="btn" data-go="2">◀ Cantos</button><button class="btn pri" id="bToSt4">Marcar furos ▶</button></div>
+  </div>
+ </div>
+
+ <!-- Passo 4 -->
+ <div class="step" id="st4" hidden>
+  <div class="box">
+   <div class="row" style="align-items:center"><h2 id="cellTitle" style="flex:2;margin:0">Alvo 1</h2><div id="cellScore" class="big" style="flex:1;text-align:right">·</div></div>
+   <div id="cellInfo" class="note" style="min-height:40px"></div>
+   <div class="cvwrap" id="wrapT"><canvas id="cvT" width="480" height="480"></canvas><canvas id="loupeT" class="loupe" width="300" height="300"></canvas></div>
+   <p class="note">Toque no <b>centro do furo</b> (segure e arraste para afinar com a lupa). Círculo amarelo = aba do plug.</p>
+   <div class="row mt"><button class="btn" id="bPrev">◀ Anterior</button><button class="btn pri" id="bNext">Próximo ▶</button></div>
+   <div class="row mt"><button class="btn sm" id="bAdd">+ 2º furo</button><button class="btn sm" id="bDelHole">Apagar furo</button><button class="btn sm" id="bZero">Sem impacto (0)</button></div>
+   <div class="row">
+    <div><label>Pontuação manual</label><select id="selMan"><option value="">Automática</option><option>X</option><option>10</option><option>9</option><option>8</option><option>7</option><option>6</option><option>5</option><option value="4">4 (fora do 5, no quadrado)</option><option value="0">0 (fora do quadrado)</option></select></div>
+   </div>
+   <label class="chk"><input type="checkbox" id="chkAuto"> Avançar sozinho após marcar o furo</label>
+   <details>
+    <summary>Ajuste fino do centro do alvo · First Shot Error</summary>
+    <p class="note">Se os anéis desenhados não estiverem centrados no alvo impresso, mova-os (0,2 mm por toque):</p>
+    <div class="arrows">
+     <span></span><button class="btn sm" data-adj="0,-1">▲</button><span></span>
+     <button class="btn sm" data-adj="-1,0">◀</button><button class="btn sm" id="bAdjReset">⟲</button><button class="btn sm" data-adj="1,0">▶</button>
+     <span></span><button class="btn sm" data-adj="0,1">▼</button><span></span>
+    </div>
+    <button class="btn sm mt" id="bFse">Anular furo selecionado (First Shot Error)</button>
+    <p class="note">FSE: o 1º tiro da série caiu numa caixa de pontuação por engano e o árbitro foi chamado antes do tiro seguinte. Vale uma vez por prova; o furo anulado não pontua nem gera penalidade.</p>
+   </details>
+  </div>
+  <div class="box"><div class="grid5" id="miniGrid"></div></div>
+  <div class="totbar" id="totbar"></div>
+  <div class="row"><button class="btn" data-go="3">◀ Anéis</button><button class="btn ok" id="bToSt5">Concluir leitura ▶</button></div>
+ </div>
+
+ <!-- Passo 5 -->
+ <div class="step" id="st5" hidden>
+  <div class="box" id="resBox"></div>
+  <div class="box">
+   <h2>5 · Registro do cartão</h2>
+   <h3>Identificação</h3>
+   <div class="row"><div><label>Local</label><input id="mLocal"></div><div><label>Nº cartão / prova</label><input id="mProva"></div></div>
+   <h3>Equipamento</h3>
+   <label>Carabina</label><select id="mCarab"></select>
+   <label>Luneta</label><select id="mLun"></select>
+   <label>Chumbinho / munição</label><select id="mProj"></select>
+   <div class="row"><div><label>Peso (gr)</label><input id="mPeso" type="number" step="0.01" inputmode="decimal"></div><div><label>Formatação (saia/cabeça)</label><input id="mForm" placeholder="ex.: 4,52 mm"></div></div>
+   <label>Apoio</label><select id="mApoio"></select>
+   <div class="row"><label class="chk"><input type="checkbox" id="mBota"> Bota</label><label class="chk"><input type="checkbox" id="mBolsa"> Bolsinha</label></div>
+   <h3>Velocidade e energia (Garmin C1)</h3>
+   <div class="row"><div><label>Vel. média</label><input id="mVel" type="number" step="0.1" inputmode="decimal"></div><div><label>Unidade</label><select id="mVelU"><option value="ms">m/s</option><option value="fps">fps</option></select></div></div>
+   <div class="row"><div><label>DP</label><input id="mDp" type="number" step="0.1" inputmode="decimal"></div><div><label>ES</label><input id="mEs" type="number" step="0.1" inputmode="decimal"></div></div>
+   <div id="energyOut"></div>
+   <h3>Condições</h3>
+   <div class="row"><div><label>Clima</label><input id="mClima" placeholder="sol, nublado…"></div><div><label>Temp. (°C)</label><input id="mTemp" type="number" step="0.5" inputmode="decimal"></div></div>
+   <label>Vento</label><input id="mVento" placeholder="calmo, 2 m/s da esquerda…">
+   <h3>Observações</h3>
+   <textarea id="mObs" placeholder="respiração, gatilho, limpeza do cano…"></textarea>
+   <div class="row mt"><button class="btn" data-go="4">◀ Furos</button><button class="btn ok" id="bSave">💾 Salvar cartão</button></div>
+   <button class="btn bad sm mt" id="bDiscard">Descartar este cartão</button>
+  </div>
+ </div>
+</section>
+
+<!-- ============ HISTÓRICO ============ -->
+<section id="tab-hist" class="tab">
+ <div id="histList">
+  <div class="box">
+   <h2>Histórico</h2>
+   <div class="row"><div><label>Categoria</label><select id="hCat"></select></div><div><label>Carabina</label><select id="hCarab"></select></div></div>
+   <label>Chumbinho / munição</label><select id="hProj"></select>
+  </div>
+  <div class="box" id="histItems"></div>
+ </div>
+ <div id="histDetail" hidden></div>
+</section>
+
+<!-- ============ EVOLUÇÃO ============ -->
+<section id="tab-evo" class="tab">
+ <div class="box">
+  <h2>Evolução</h2>
+  <label>Categoria</label><select id="eCat"></select>
+  <div class="mt"><canvas id="cvE" width="680" height="340" style="width:100%;background:#0b0e13"></canvas></div>
+  <div id="evoStats" class="mt"></div>
+ </div>
+</section>
+
+<!-- ============ COMPARATIVOS ============ -->
+<section id="tab-comp" class="tab">
+ <div class="box">
+  <h2>Comparativos</h2>
+  <label>Categoria</label><select id="cCat"></select>
+  <label>Agrupar por</label>
+  <select id="cBy"><option value="cpl">Carabina × chumbinho × luneta</option><option value="cp">Carabina × chumbinho</option><option value="c">Carabina</option><option value="p">Chumbinho</option><option value="l">Luneta</option></select>
+  <div id="compOut" class="mt"></div>
+ </div>
+</section>
+
+<!-- ============ MAPA DE CALOR ============ -->
+<section id="tab-calor" class="tab">
+ <div class="box">
+  <h2>Mapa de calor</h2>
+  <div class="row"><div><label>Distância</label><select id="mcDist"><option value="25">Alvo 25 m</option><option value="50">Alvo 50 m</option></select></div><div><label>Categoria</label><select id="mcCat"></select></div></div>
+  <div class="row"><div><label>Carabina</label><select id="mcCarab"></select></div><div><label>Chumbinho</label><select id="mcProj"></select></div></div>
+  <label>Últimos cartões</label><select id="mcN"><option value="0">Todos</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="20">20</option></select>
+  <div class="mt"><canvas id="cvH" width="600" height="600" style="width:100%"></canvas></div>
+  <div id="heatStats" class="mt"></div>
+ </div>
+</section>
+
+<!-- ============ EQUIPAMENTOS ============ -->
+<section id="tab-equip" class="tab"><div id="equipOut"></div></section>
+
+<!-- ============ BACKUP ============ -->
+<section id="tab-backup" class="tab">
+ <div class="box">
+  <h2>Backup e exportação</h2>
+  <p class="note">Os dados ficam só neste aparelho. Faça backup e guarde o .json no Dropbox; restaure em outro celular pelo mesmo arquivo.</p>
+  <button class="btn pri" id="bBackup">⬇️ Baixar backup (.json)</button>
+  <label>Restaurar backup</label>
+  <select id="restMode"><option value="merge">Mesclar com o que já existe</option><option value="replace">Substituir tudo</option></select>
+  <label class="btn mt">⬆️ Escolher arquivo .json<input type="file" accept=".json,application/json" id="inRestore" hidden></label>
+  <button class="btn mt" id="bCsv">📊 Exportar CSV (Excel)</button>
+  <p class="note" id="storeInfo"></p>
+ </div>
+ <div class="box">
+  <h2>Instalar na tela inicial</h2>
+  <p class="note"><b>iPhone (Safari):</b> Compartilhar → Adicionar à Tela de Início.<br><b>Android (Chrome):</b> menu ⋮ → Instalar app / Adicionar à tela inicial.</p>
+ </div>
+ <div class="box">
+  <h2>Sobre</h2>
+  <p class="note">Regras: WRABF Official Rule Book 2023-2027 (Apêndice E), Scoring Guide e regulamentos CBTE. Pontuação pela melhor borda (inward scoring) com o raio do plug; X no 25 m = plug cobre todo o anel de 1 mm; X no 50 m = tocar o anel de 0,396 mm. Fora do 5 no quadrado = 4; fora do quadrado = 0; dois tiros na mesma caixa = menor nota e −1.<br><b>Leitura por foto é uma aproximação, não apuração oficial.</b></p>
+  <button class="btn bad sm mt" id="bWipe">Apagar todos os dados deste aparelho</button>
+ </div>
+</section>
+</main>
+<div id="toast"></div>
+<div id="printArea"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   NSN WRABF · App de leitura e registro de alvos — v1 (modo A, assistido)
+   Um único arquivo. Dados no aparelho (localStorage + IndexedDB).
+   Organização:
+     1. Utilidades          5. Sessão / passos do novo cartão
+     2. Regras WRABF        6. Telas: histórico, evolução, comparativos, calor
+     3. Geometria           7. Equipamentos, backup, CSV, impressão
+     4. Armazenamento       8. Modo B (gancho para detecção automática)
+   ===================================================================== */
+
+/* ---------- 1. Utilidades ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const fmt = (n, d = 1) => (n == null || n === '' || isNaN(n)) ? '—' : Number(n).toFixed(d).replace('.', ',');
+const num = v => { if (v == null || v === '') return null; const n = parseFloat(String(v).replace(',', '.')); return isNaN(n) ? null : n; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const today = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+const dataBR = s => s ? s.split('-').reverse().join('/') : '';
+const DPR = Math.min(window.devicePixelRatio || 1, 3);
+let toastT;
+function toast(msg, ms = 2600) { const t = $('#toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toastT); toastT = setTimeout(() => t.style.display = 'none', ms); }
+function download(name, content, type) {
+  const blob = content instanceof Blob ? content : new Blob([content], { type });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+function loadImage(src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Imagem inválida')); i.src = src; }); }
+function toJpeg(src, max, q = 0.8) {
+  const s = Math.min(1, max / Math.max(src.width, src.height));
+  const c = document.createElement('canvas'); c.width = Math.round(src.width * s); c.height = Math.round(src.height * s);
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', q);
+}
+function opts(list, sel, empty) {
+  return (empty != null ? `<option value="">${esc(empty)}</option>` : '') + list.map(o => { const v = typeof o === 'string' ? o : o.v, t = typeof o === 'string' ? o : o.t; return `<option value="${esc(v)}"${v === sel ? ' selected' : ''}>${esc(t)}</option>`; }).join('');
+}
+
+/* ---------- 2. Regras WRABF ---------- */
+const CATS = {
+  'AR-LV': { nome: 'Carabina de Ar Light', dist: 25, tetoJ: 16 },
+  'AR-HV': { nome: 'Carabina de Ar Heavy', dist: 25, tetoJ: 27 },
+  'AR-SP': { nome: 'Carabina de Ar Spring', dist: 25, tetoJ: null, tetoPend: true },
+  'AR-UN': { nome: 'Carabina de Ar Unlimited', dist: 50, tetoJ: null },
+  'RF-LV': { nome: 'Rimfire Light', dist: 50, tetoJ: null },
+  'RF-HV': { nome: 'Rimfire Heavy', dist: 50, tetoJ: null },
+};
+// [pontos, raio mm] — Apêndice E do Rule Book 2023-2027
+const RINGS = {
+  25: [[10, 1.0], [9, 4.0], [8, 7.0], [7, 11.0], [6, 15.0], [5, 19.5]],
+  50: [[10, 3.175], [9, 6.35], [8, 9.525], [7, 12.7], [6, 15.875], [5, 19.05]],
+};
+const X25_RING = 1.0, X50_RING = 0.396;
+const CAL_RING = { 25: 15.0, 50: 15.875 };
+const CALIBRES = { '4.5': { nome: '4,5 mm', r: 2.25 }, '5.5': { nome: '5,5 mm', r: 2.75 }, '22': { nome: '.22 LR', r: 2.8 } };
+const PLUGS = {
+  '224': { nome: '.224 CBTE (aba 5,69 mm)', r: 2.845 },
+  '45': { nome: 'CBTE 4,5 mm', r: 2.30 },
+  'nom': { nome: 'Raio nominal do calibre', r: null },
+};
+const DUV_P = 0.55, DUV_X = 0.25; // faixas de dúvida (mm)
+const META = 245;
+const plugRadius = (plug, cal) => plug === 'nom' ? (CALIBRES[cal] || CALIBRES['4.5']).r : PLUGS[plug].r;
+const distOf = cat => (CATS[cat] || CATS['AR-LV']).dist;
+
+/** Pontua um furo. dx,dy = centro do furo em mm a partir do centro do alvo. */
+function scoreHole(dx, dy, dist, plugR) {
+  const d = Math.hypot(dx, dy);
+  const be = Math.max(d - plugR, 0);           // melhor borda (inward scoring)
+  const rings = RINGS[dist];
+  let pts = 4;                                  // dentro do quadrado sem tocar o 5
+  for (const [p, r] of rings) if (be <= r) { pts = p; break; }
+  let x, xMargin;
+  if (dist === 25) { x = d + X25_RING <= plugR; xMargin = Math.abs(plugR - (d + X25_RING)); }
+  else { x = be <= X50_RING; xMargin = Math.abs(be - X50_RING); }
+  let near = Infinity; for (const [, r] of rings) near = Math.min(near, Math.abs(be - r));
+  return { pts, x, d, be, duvP: near < DUV_P, duvX: pts === 10 && xMargin < DUV_X, out5: pts === 4 };
+}
+
+/** Calcula o cartão inteiro (serve para sessão e para registros salvos). */
+function computeAll(st) {
+  const dist = distOf(st.cat), plugR = plugRadius(st.plug, st.calibre);
+  const scores = [], holes = [], duv = [];
+  let total = 0, x = 0, pen = 0, pend = 0;
+  st.targets.forEach((t, i) => {
+    const counted = t.holes.filter(h => !h.fse);
+    const hr = counted.map(h => { const dx = (h.u - t.adj.u) * st.pitchX, dy = (h.v - t.adj.v) * st.pitchY; return Object.assign(scoreHole(dx, dy, dist, plugR), { dx, dy }); });
+    let s;
+    if (t.manual) s = t.manual === 'X' ? { pts: 10, x: true, man: true } : { pts: +t.manual, x: false, man: true };
+    else if (!hr.length) s = { pts: 0, x: false, pend: true };
+    else {
+      let w = hr[0]; for (const r of hr) if (r.pts < w.pts || (r.pts === w.pts && w.x && !r.x)) w = r;
+      s = { pts: w.pts, x: w.x, duvP: hr.some(r => r.duvP), duvX: hr.some(r => r.duvX), out5: w.out5, d: w.d };
+    }
+    s.dbl = counted.length >= 2; if (s.dbl) pen++;
+    s.fse = t.holes.some(h => h.fse);
+    if (s.pend) pend++;
+    total += s.pts; if (s.x) x++;
+    if (!s.man && (s.duvP || s.duvX || s.out5)) duv.push({ i, p: s.duvP, x: s.duvX, o: s.out5 });
+    if (t.manual !== '0') hr.forEach(r => holes.push({ x: r.dx, y: r.dy, i }));
+    scores.push(s);
+  });
+  total -= pen;
+  return { scores, total, x, pen, pend, duv, holes, group: groupStats(holes), dist, plugR };
+}
+
+/** Agrupamento composto (todos os furos sobrepostos no centro do alvo). */
+function groupStats(p) {
+  const n = p.length; if (n < 2) return null;
+  const cen = a => a.length ? { x: a.reduce((s, q) => s + q.x, 0) / a.length, y: a.reduce((s, q) => s + q.y, 0) / a.length, n: a.length } : null;
+  const c = cen(p);
+  const rs = p.map(q => Math.hypot(q.x - c.x, q.y - c.y));
+  const mr = rs.reduce((a, b) => a + b, 0) / n;
+  const sd = Math.sqrt(rs.reduce((a, r) => a + (r - mr) ** 2, 0) / n);
+  let es = 0; for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) es = Math.max(es, Math.hypot(p[i].x - p[j].x, p[i].y - p[j].y));
+  const lim = Math.max(2 * mr, mr + 2 * sd);
+  const fliers = p.filter((q, k) => rs[k] > lim).map(q => q.i + 1);
+  const h1 = cen(p.filter(q => q.i < 12)), h2 = cen(p.filter(q => q.i >= 12));
+  const r1 = avgR(p.filter(q => q.i < 12)), r2 = avgR(p.filter(q => q.i >= 12));
+  function avgR(a) { if (!a.length) return null; const cc = cen(a); return a.reduce((s, q) => s + Math.hypot(q.x - cc.x, q.y - cc.y), 0) / a.length; }
+  // tendência: regressão da distância ao centro do alvo × ordem do alvo
+  const xs = p.map(q => q.i), ys = p.map(q => Math.hypot(q.x, q.y));
+  const mx = xs.reduce((a, b) => a + b, 0) / n, my = ys.reduce((a, b) => a + b, 0) / n;
+  let sxy = 0, sxx = 0; for (let k = 0; k < n; k++) { sxy += (xs[k] - mx) * (ys[k] - my); sxx += (xs[k] - mx) ** 2; }
+  const slope = sxx ? sxy / sxx : 0;
+  return { n, cx: c.x, cy: c.y, mr, sd, es, fliers, h1, h2, r1, r2, slope };
+}
+function dirTxt(dx, dy) {
+  const a = [];
+  if (Math.abs(dx) >= 0.05) a.push(`${fmt(Math.abs(dx), 2)} mm ${dx > 0 ? 'à direita' : 'à esquerda'}`);
+  if (Math.abs(dy) >= 0.05) a.push(`${fmt(Math.abs(dy), 2)} mm ${dy > 0 ? 'abaixo' : 'acima'}`);
+  return a.length ? a.join(' e ') : 'centrado';
+}
+function groupHTML(g) {
+  if (!g) return '<p class="note">Agrupamento: marque pelo menos 2 furos.</p>';
+  let t = `<table>
+  <tr><th>Centro do grupo (viés)</th><td>${dirTxt(g.cx, g.cy)}<br><span class="note">dx ${fmt(g.cx, 2)} · dy ${fmt(g.cy, 2)} mm</span></td></tr>
+  <tr><th>Raio médio</th><td>${fmt(g.mr, 2)} mm <span class="note">(DP ${fmt(g.sd, 2)})</span></td></tr>
+  <tr><th>Extreme spread</th><td>${fmt(g.es, 2)} mm <span class="note">centro a centro</span></td></tr>
+  <tr><th>Fliers</th><td>${g.fliers.length ? 'alvo ' + g.fliers.join(', ') : 'nenhum'}</td></tr>`;
+  if (g.h1 && g.h2) t += `<tr><th>Tendência na série</th><td>Alvos 1–12: ${dirTxt(g.h1.x, g.h1.y)}, raio ${fmt(g.r1, 2)} mm<br>Alvos 13–25: ${dirTxt(g.h2.x, g.h2.y)}, raio ${fmt(g.r2, 2)} mm<br><span class="note">Deriva do centro: ${dirTxt(g.h2.x - g.h1.x, g.h2.y - g.h1.y)} · distância ao centro ${g.slope >= 0 ? 'aumenta' : 'diminui'} ${fmt(Math.abs(g.slope) * 10, 2)} mm a cada 10 alvos</span></td></tr>`;
+  return t + '</table>';
+}
+function energyJ(vel, unit, pesoGr) {
+  if (!vel || !pesoGr) return null;
+  const v = unit === 'fps' ? vel * 0.3048 : vel; const m = pesoGr * 0.00006479891;
+  return 0.5 * m * v * v;
+}
+function energyHTML(cat, E) {
+  if (E == null) return '<p class="note">Informe a velocidade e o peso para calcular a energia.</p>';
+  const c = CATS[cat]; let h = `<p>Energia: <b>${fmt(E, 2)} J</b></p>`;
+  if (c.tetoJ) {
+    if (E > c.tetoJ) h += `<div class="alert">⚠️ Acima do teto da ${cat} (${c.tetoJ} J).</div>`;
+    else if (E > c.tetoJ * 0.97) h += `<div class="warn">Perto do teto da ${cat} (${c.tetoJ} J). Pouca margem.</div>`;
+    else h += `<div class="okbox">Dentro do teto da ${cat} (${c.tetoJ} J).</div>`;
+  } else if (c.tetoPend) h += '<p class="note">Teto de energia da AR-SP ainda a confirmar.</p>';
+  else h += `<p class="note">${cat}: sem limite de energia.</p>`;
+  return h;
+}
+
+/* ---------- 3. Geometria ---------- */
+/** Homografia: 4 pares (u,v) -> (x,y). Retorna 9 coeficientes ou null. */
+function solveH(src, dst) {
+  const A = [];
+  for (let k = 0; k < 4; k++) {
+    const [u, v] = src[k], [x, y] = dst[k];
+    A.push([u, v, 1, 0, 0, 0, -u * x, -v * x, x]);
+    A.push([0, 0, 0, u, v, 1, -u * y, -v * y, y]);
+  }
+  for (let c = 0; c < 8; c++) {
+    let p = c; for (let r = c + 1; r < 8; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+    if (Math.abs(A[p][c]) < 1e-10) return null;
+    [A[c], A[p]] = [A[p], A[c]];
+    for (let r = 0; r < 8; r++) if (r !== c) { const f = A[r][c] / A[c][c]; for (let k = c; k < 9; k++) A[r][k] -= f * A[c][k]; }
+  }
+  const h = A.map((r, i) => r[8] / r[i]); h.push(1); return h;
+}
+const applyH = (H, u, v) => { const w = H[6] * u + H[7] * v + H[8]; return [(H[0] * u + H[1] * v + H[2]) / w, (H[3] * u + H[4] * v + H[5]) / w]; };
+const GRID_UV = [[0, 0], [4, 0], [4, 4], [0, 4]]; // centros dos alvos 1, 5, 25, 21
+const CORNER_LBL = ['1', '5', '25', '21'];
+
+/** Amostra a foto corrigida: mapFn(px,py) -> [u,v] de grade. */
+function renderRect(imgD, H, N, mapFn) {
+  const out = new ImageData(N, N), o = out.data, d = imgD.d, w = imgD.w, h = imgD.h, w4 = w * 4;
+  for (let py = 0; py < N; py++) for (let px = 0; px < N; px++) {
+    const [u, v] = mapFn(px + 0.5, py + 0.5);
+    const ww = H[6] * u + H[7] * v + H[8];
+    const X = (H[0] * u + H[1] * v + H[2]) / ww, Y = (H[3] * u + H[4] * v + H[5]) / ww;
+    const oi = (py * N + px) * 4;
+    if (X < 0 || Y < 0 || X >= w - 1 || Y >= h - 1) { o[oi] = o[oi + 1] = o[oi + 2] = 25; o[oi + 3] = 255; continue; }
+    const x0 = X | 0, y0 = Y | 0, fx = X - x0, fy = Y - y0, i = (y0 * w + x0) * 4;
+    for (let c = 0; c < 3; c++) {
+      const a = d[i + c] * (1 - fx) + d[i + 4 + c] * fx, b = d[i + w4 + c] * (1 - fx) + d[i + w4 + 4 + c] * fx;
+      o[oi + c] = a * (1 - fy) + b * fy;
+    }
+    o[oi + 3] = 255;
+  }
+  return out;
+}
+function drawRings(ctx, cx, cy, kx, ky, dist, lw) {
+  ctx.save();
+  for (const [p, r] of RINGS[dist]) {
+    const cal = r === CAL_RING[dist];
+    ctx.strokeStyle = cal ? 'rgba(80,210,255,.95)' : 'rgba(255,204,51,.75)';
+    ctx.lineWidth = (cal ? 2.2 : 1) * lw;
+    ctx.beginPath(); ctx.ellipse(cx, cy, r * kx, r * ky, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+  const xr = dist === 25 ? X25_RING : X50_RING;
+  ctx.strokeStyle = 'rgba(255,90,90,.9)'; ctx.lineWidth = lw;
+  ctx.beginPath(); ctx.ellipse(cx, cy, Math.max(xr * kx, 1), Math.max(xr * ky, 1), 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+}
+
+/* ---------- 4. Armazenamento ---------- */
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { toast('Sem espaço no aparelho'); } },
+};
+const SET = Object.assign({ pitch25x: 46, pitch25y: 46, pitch50x: 46, pitch50y: 46, plug: '224', calibre: '4.5', cat: 'AR-LV', local: 'CT CicogNery', autoNext: true, velUnit: 'ms' }, LS.get('wrabf.settings', {}));
+const saveSet = () => LS.set('wrabf.settings', SET);
+function seedEquip() {
+  const c = (nome, tipo, calibre, luneta, cat, obs = '') => ({ id: uid(), nome, tipo, calibre, luneta, cat, obs });
+  const p = (nome, peso, calibre, obs = '') => ({ id: uid(), nome, peso, calibre, obs });
+  return {
+    carabinas: [
+      c('Steyr LG110', 'PCP', '4.5', 'Weaver T-36x40', 'AR-LV', '≤16 J; regulada a 16,3 J, rebaixar'),
+      c('Steyr Challenge', 'PCP', '4.5', 'Vector Optics Sentinel-X 10-40x50 Center Dot', 'AR-HV', '≤27 J'),
+      c('Air Arms TX200', 'Spring', '4.5', 'Vector Optics Sentinel-X 10-40x50 Center Dot', 'AR-SP'),
+      c('Weihrauch HW77', 'Spring', '5.5', 'Vector Optics Hugo 6-24x50', ''),
+      c('Daystate Air Wolf', 'PCP', '5.5', 'Vector Optics Minotaur GenII 12-60x60 MFL', ''),
+      c('JTS Airacuda Max Bigbore', 'PCP', '6.35', 'Discovery HD Gen II 5-30x56', ''),
+      c('Anschütz 1416', '.22 LR', '22', 'Sightron SII 36x42 BRD', 'RF-LV', 'RF 50 m'),
+      c('CZ 457 Premium', '.22 LR', '22', 'Vector Optics Continental 6-24x56', 'RF-LV', 'RF 50 m'),
+    ],
+    lunetas: ['Weaver T-36x40', 'Vector Optics Sentinel-X 10-40x50 Center Dot', 'Vector Optics Sentinel-X 10-40x50 Center Dot (2ª)', 'Vector Optics Hugo 6-24x50', 'Vector Optics Minotaur GenII 12-60x60 MFL', 'Discovery HD Gen II 5-30x56', 'Sightron SII 36x42 BRD', 'Vector Optics Continental 6-24x56', 'Vector Optics Taurus 3-18x50 FFP', 'Vector Optics Taurus 5-30x56 FFP'].map(n => ({ id: uid(), nome: n, obs: '' })),
+    projeteis: [
+      p('JSB 8,44 gr', 8.44, '4.5', '0,54 g, formatado 4,52 mm (LG110)'),
+      p('JSB 13,43 gr', 13.43, '4.5', 'Challenge'),
+      p('JSB 7,87 gr', 7.87, '4.5', 'a testar na TX200'),
+      p('Rifle 8,33 gr', 8.33, '4.5', 'a testar na TX200'),
+      p('JSB 10,34 gr', 10.34, '4.5', 'a testar na TX200'),
+    ],
+    apoios: [{ id: uid(), nome: 'Frontrest Xred Supremo + rearest WRABF (couro em V)', obs: '' }],
+  };
+}
+let EQ = LS.get('wrabf.equip', null); if (!EQ) { EQ = seedEquip(); LS.set('wrabf.equip', EQ); }
+const saveEq = () => LS.set('wrabf.equip', EQ);
+
+const DB = {
+  db: null,
+  open() {
+    return new Promise((res, rej) => {
+      const rq = indexedDB.open('wrabf-alvos', 1);
+      rq.onupgradeneeded = () => { const d = rq.result; if (!d.objectStoreNames.contains('cards')) d.createObjectStore('cards', { keyPath: 'id' }); if (!d.objectStoreNames.contains('meta')) d.createObjectStore('meta'); };
+      rq.onsuccess = () => { this.db = rq.result; res(); }; rq.onerror = () => rej(rq.error);
+    });
+  },
+  req(store, mode, fn) { return new Promise((res, rej) => { const tx = this.db.transaction(store, mode); const r = fn(tx.objectStore(store)); tx.oncomplete = () => res(r && r.result); tx.onerror = () => rej(tx.error); }); },
+  all() { return this.req('cards', 'readonly', s => s.getAll()); },
+  put(c) { return this.req('cards', 'readwrite', s => s.put(c)); },
+  del(id) { return this.req('cards', 'readwrite', s => s.delete(id)); },
+  clear() { return this.req('cards', 'readwrite', s => s.clear()); },
+  mget(k) { return this.req('meta', 'readonly', s => s.get(k)); },
+  mput(k, v) { return this.req('meta', 'readwrite', s => s.put(v, k)); },
+  mdel(k) { return this.req('meta', 'readwrite', s => s.delete(k)); },
+};
+let CARDS = [];
+async function reloadCards() { CARDS = (await DB.all()) || []; CARDS.sort((a, b) => (b.data || '').localeCompare(a.data || '') || (b.created || 0) - (a.created || 0)); }
+
+/* ---------- 5. Sessão / passos do novo cartão ---------- */
+let S = null;
+function blankTargets() { return Array.from({ length: 25 }, () => ({ holes: [], manual: null, adj: { u: 0, v: 0 } })); }
+function newSession() {
+  const dist = distOf(SET.cat);
+  S = {
+    id: null, created: null, data: today(), cat: SET.cat, calibre: SET.calibre, plug: SET.plug,
+    pitchX: SET['pitch' + dist + 'x'], pitchY: SET['pitch' + dist + 'y'],
+    corners: null, targets: blankTargets(), photo: null, photoName: '',
+    meta: { local: SET.local, prova: '', carabina: '', luneta: '', projetil: '', peso: '', formatacao: '', apoio: '', bota: false, bolsinha: false, vel: '', velUnit: SET.velUnit, dp: '', es: '', clima: '', vento: '', temp: '', obs: '' },
+    work: null, imgD: null, H: null, cur: 0, sel: 0, addMode: false, step: 1,
+  };
+}
+function serial(st) { const o = {}; for (const k of ['id', 'created', 'data', 'cat', 'calibre', 'plug', 'pitchX', 'pitchY', 'corners', 'targets', 'photo', 'photoName', 'meta', 'cur', 'step']) o[k] = st[k]; return JSON.parse(JSON.stringify(o)); }
+let draftT;
+function saveDraft() { clearTimeout(draftT); draftT = setTimeout(() => { if (S && S.photo) DB.mput('draft', serial(S)).catch(() => {}); }, 700); }
+function setWork(src, max = 2400) {
+  const s = Math.min(1, max / Math.max(src.width, src.height));
+  const c = document.createElement('canvas'); c.width = Math.round(src.width * s); c.height = Math.round(src.height * s);
+  const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(src, 0, 0, c.width, c.height);
+  S.work = c; S.imgD = { w: c.width, h: c.height, d: x.getImageData(0, 0, c.width, c.height).data };
+}
+function updateH() {
+  if (!S.work || !S.corners) { S.H = null; return; }
+  S.H = solveH(GRID_UV, S.corners.map(p => [p[0] * S.work.width, p[1] * S.work.height]));
+}
+async function restoreSession(st) {
+  newSession(); Object.assign(S, JSON.parse(JSON.stringify(st)));
+  S.addMode = false; S.sel = 0;
+  const img = await loadImage(S.photo); setWork(img); updateH();
+}
+
+function goStep(n) {
+  if (!S) newSession();
+  if (n >= 2 && !S.work) { toast('Tire ou escolha a foto primeiro'); n = 1; }
+  if (n >= 3) { updateH(); if (!S.H) { toast('Os 4 pontos não formam uma grade válida'); n = 2; } }
+  S.step = n;
+  $$('.step').forEach((el, i) => el.hidden = i + 1 !== n);
+  $$('#stepBar span').forEach((el, i) => el.classList.toggle('on', i < n));
+  if (n === 1) fillStep1();
+  if (n === 2) requestAnimationFrame(drawCorners);
+  if (n === 3) { overviewBase = null; fillPitch(); drawOverview(); }
+  if (n === 4) enterCells();
+  if (n === 5) fillStep5();
+  window.scrollTo(0, 0);
+  if (n > 1) saveDraft();
+}
+$$('[data-go]').forEach(b => b.onclick = () => goStep(+b.dataset.go));
+
+/* Passo 1 */
+function fillStep1() {
+  $('#fCat').innerHTML = opts(Object.keys(CATS).map(k => ({ v: k, t: `${k} · ${CATS[k].nome} (${CATS[k].dist} m)` })), S.cat);
+  $('#fCal').innerHTML = opts(Object.keys(CALIBRES).map(k => ({ v: k, t: CALIBRES[k].nome })), S.calibre);
+  $('#fPlug').innerHTML = opts(Object.keys(PLUGS).map(k => ({ v: k, t: PLUGS[k].nome })), S.plug);
+  $('#fData').value = S.data; plugNote();
+}
+function plugNote() {
+  const r = plugRadius(S.plug, S.calibre), dist = distOf(S.cat);
+  const lim10 = RINGS[dist][0][1] + r;
+  const xl = dist === 25 ? `X até ${fmt(r - X25_RING, 3)} mm` : `X até ${fmt(X50_RING + r, 3)} mm`;
+  $('#plugNote').innerHTML = `Raio efetivo do plug: <b>${fmt(r, 3)} mm</b> → 10 até ${fmt(lim10, 3)} mm do centro; ${xl}.` + (S.calibre === '5.5' ? '<br>5,5 mm: parâmetros provisórios, ainda sem cartão real de calibração.' : '');
+}
+$('#fCat').onchange = e => { S.cat = e.target.value; SET.cat = S.cat; const d = distOf(S.cat); S.pitchX = SET['pitch' + d + 'x']; S.pitchY = SET['pitch' + d + 'y']; if (d === 50 && S.calibre !== '22' && S.cat.startsWith('RF')) { S.calibre = '22'; $('#fCal').value = '22'; } saveSet(); plugNote(); };
+$('#fCal').onchange = e => { S.calibre = e.target.value; SET.calibre = S.calibre; saveSet(); plugNote(); };
+$('#fPlug').onchange = e => { S.plug = e.target.value; SET.plug = S.plug; saveSet(); plugNote(); };
+$('#fData').onchange = e => S.data = e.target.value;
+async function onPhoto(e) {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    toast('Carregando foto…');
+    const url = URL.createObjectURL(f); const img = await loadImage(url); URL.revokeObjectURL(url);
+    setWork(img); S.photo = toJpeg(img, 1600, 0.8); S.photoName = f.name;
+    S.corners = null; S.targets = blankTargets(); S.cur = 0;
+    const m = f.name.match(/(AR-LV|AR-HV|AR-SP|AR-SR|AR-UN|RF-LV|RF-HV)[-_](?:\d{2}[-_])?(\d{4})(\d{2})(\d{2})/i);
+    if (m) { let c = m[1].toUpperCase(); if (c === 'AR-SR') c = 'AR-SP'; S.cat = c; S.data = `${m[2]}-${m[3]}-${m[4]}`; const d = distOf(c); S.pitchX = SET['pitch' + d + 'x']; S.pitchY = SET['pitch' + d + 'y']; }
+    goStep(2);
+  } catch (err) { toast('Não consegui abrir a foto'); }
+}
+$('#inCam').onchange = onPhoto; $('#inGal').onchange = onPhoto;
+
+/* Passo 2: cantos */
+let cScale = 1, dragC = -1;
+function defaultCorners() { S.corners = [[.2, .2], [.8, .2], [.8, .8], [.2, .8]]; }
+function drawCorners() {
+  if (!S.corners) defaultCorners();
+  updateH();
+  const cv = $('#cvC'), wrap = $('#wrapC'), cssW = wrap.clientWidth || 340;
+  cScale = cssW / S.work.width;
+  cv.style.width = cssW + 'px'; cv.style.height = (S.work.height * cScale) + 'px';
+  cv.width = Math.round(cssW * DPR); cv.height = Math.round(S.work.height * cScale * DPR);
+  const ctx = cv.getContext('2d'), k = cv.width / S.work.width;
+  ctx.drawImage(S.work, 0, 0, cv.width, cv.height);
+  if (S.H) {
+    ctx.strokeStyle = 'rgba(78,161,255,.95)'; ctx.lineWidth = 1.5 * DPR;
+    for (let i = 0; i < 25; i++) {
+      const [x, y] = applyH(S.H, i % 5, Math.floor(i / 5)); const X = x * k, Y = y * k, s = 6 * DPR;
+      ctx.beginPath(); ctx.moveTo(X - s, Y); ctx.lineTo(X + s, Y); ctx.moveTo(X, Y - s); ctx.lineTo(X, Y + s); ctx.stroke();
+    }
+  }
+  ctx.strokeStyle = 'rgba(255,204,51,.6)'; ctx.lineWidth = 1.5 * DPR; ctx.beginPath();
+  S.corners.forEach((p, i) => { const X = p[0] * cv.width, Y = p[1] * cv.height; i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }); ctx.closePath(); ctx.stroke();
+  S.corners.forEach((p, i) => {
+    const X = p[0] * cv.width, Y = p[1] * cv.height;
+    ctx.fillStyle = 'rgba(255,204,51,.25)'; ctx.strokeStyle = '#ffcc33'; ctx.lineWidth = 2.5 * DPR;
+    ctx.beginPath(); ctx.arc(X, Y, 16 * DPR, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(X, Y, 1.5 * DPR, 0, 7); ctx.fillStyle = '#ff3b3b'; ctx.fill();
+    ctx.fillStyle = '#ffcc33'; ctx.font = `bold ${14 * DPR}px system-ui`; ctx.fillText(CORNER_LBL[i], X + 18 * DPR, Y - 14 * DPR);
+  });
+}
+function evPos(e, el) { const r = el.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height }; }
+function placeLoupe(lp, px, py, wrapW) {
+  let left = px - 75, top = py - 185; if (top < 0) top = py + 45;
+  left = Math.max(0, Math.min(wrapW - 150, left));
+  lp.style.left = left + 'px'; lp.style.top = top + 'px'; lp.style.display = 'block';
+}
+function crosshair(ctx, L) {
+  ctx.strokeStyle = '#ff3b3b'; ctx.lineWidth = 2; ctx.beginPath();
+  ctx.moveTo(L / 2 - 18, L / 2); ctx.lineTo(L / 2 - 4, L / 2); ctx.moveTo(L / 2 + 4, L / 2); ctx.lineTo(L / 2 + 18, L / 2);
+  ctx.moveTo(L / 2, L / 2 - 18); ctx.lineTo(L / 2, L / 2 - 4); ctx.moveTo(L / 2, L / 2 + 4); ctx.lineTo(L / 2, L / 2 + 18); ctx.stroke();
+}
+function cornerLoupe(p) {
+  const lp = $('#loupeC'), ctx = lp.getContext('2d'), L = lp.width;
+  const ix = p.x / cScale, iy = p.y / cScale, sw = 150 / (cScale * 5);
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, L, L);
+  ctx.drawImage(S.work, ix - sw / 2, iy - sw / 2, sw, sw, 0, 0, L, L); crosshair(ctx, L);
+  placeLoupe(lp, p.x, p.y, $('#wrapC').clientWidth);
+}
+(() => {
+  const cv = $('#cvC');
+  cv.addEventListener('pointerdown', e => {
+    const p = evPos(e, cv); let best = -1, bd = 1e9;
+    S.corners.forEach((c, i) => { const d = Math.hypot(c[0] * p.w - p.x, c[1] * p.h - p.y); if (d < bd) { bd = d; best = i; } });
+    if (bd > 60) return;
+    dragC = best; cv.setPointerCapture(e.pointerId); cornerLoupe(p); e.preventDefault();
+  });
+  cv.addEventListener('pointermove', e => {
+    if (dragC < 0) return; const p = evPos(e, cv);
+    S.corners[dragC] = [Math.min(1, Math.max(0, p.x / p.w)), Math.min(1, Math.max(0, p.y / p.h))];
+    drawCorners(); cornerLoupe(p);
+  });
+  const end = () => { if (dragC >= 0) { dragC = -1; $('#loupeC').style.display = 'none'; saveDraft(); } };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+})();
+$('#bResetC').onclick = () => { defaultCorners(); drawCorners(); };
+$('#bRot').onclick = () => {
+  const c = document.createElement('canvas'); c.width = S.work.height; c.height = S.work.width;
+  const x = c.getContext('2d'); x.translate(c.width, 0); x.rotate(Math.PI / 2); x.drawImage(S.work, 0, 0);
+  setWork(c); S.photo = toJpeg(c, 1600, 0.8); defaultCorners(); S.targets = blankTargets(); drawCorners(); saveDraft();
+};
+$('#bToSt3').onclick = () => goStep(3);
+
+/* Passo 3: conferência dos anéis */
+const OV_CP = 120; let overviewBase = null;
+function drawOverview() {
+  const cv = $('#cvO'), N = OV_CP * 5, ctx = cv.getContext('2d');
+  if (!overviewBase) overviewBase = renderRect(S.imgD, S.H, N, (px, py) => [-0.5 + px / OV_CP, -0.5 + py / OV_CP]);
+  ctx.putImageData(overviewBase, 0, 0);
+  overlayOverview(ctx, S, OV_CP, 1);
+}
+function overlayOverview(ctx, st, CP, lw) {
+  const dist = distOf(st.cat), kx = CP / st.pitchX, ky = CP / st.pitchY, plugR = plugRadius(st.plug, st.calibre);
+  st.targets.forEach((t, i) => {
+    const cx = (i % 5 + 0.5 + t.adj.u) * CP, cy = (Math.floor(i / 5) + 0.5 + t.adj.v) * CP;
+    drawRings(ctx, cx, cy, kx, ky, dist, lw);
+    t.holes.forEach(h => {
+      const X = (i % 5 + 0.5 + h.u) * CP, Y = (Math.floor(i / 5) + 0.5 + h.v) * CP;
+      ctx.strokeStyle = h.fse ? '#888' : '#ffcc33'; ctx.lineWidth = 1.5 * lw;
+      ctx.beginPath(); ctx.ellipse(X, Y, plugR * kx, plugR * ky, 0, 0, 7); ctx.stroke();
+      ctx.fillStyle = '#ff3b3b'; ctx.beginPath(); ctx.arc(X, Y, 1.6 * lw, 0, 7); ctx.fill();
+    });
+    ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.font = `bold ${Math.round(CP * 0.12)}px system-ui`;
+    ctx.fillText(String(i + 1), (i % 5) * CP + 4, Math.floor(i / 5) * CP + CP * 0.14);
+  });
+}
+function fillPitch() { $('#pX').value = S.pitchX.toFixed(1); $('#pY').value = S.pitchY.toFixed(1); $('#pRange').value = S.pitchX; }
+function setPitch(x, y) {
+  S.pitchX = Math.max(10, Math.min(120, x)); S.pitchY = Math.max(10, Math.min(120, y));
+  const d = distOf(S.cat); SET['pitch' + d + 'x'] = S.pitchX; SET['pitch' + d + 'y'] = S.pitchY; saveSet();
+  fillPitch(); drawOverview(); saveDraft();
+}
+$('#pRange').oninput = e => { const v = +e.target.value; setPitch(v, v * S.pitchY / S.pitchX); };
+$('#pX').onchange = e => { const v = num(e.target.value); if (v) setPitch(v, S.pitchY); };
+$('#pY').onchange = e => { const v = num(e.target.value); if (v) setPitch(S.pitchX, v); };
+$$('[data-pp]').forEach(b => b.onclick = () => { const [a, d] = b.dataset.pp.split(','); a === 'x' ? setPitch(S.pitchX + +d, S.pitchY) : setPitch(S.pitchX, S.pitchY + +d); });
+$('#cvO').addEventListener('click', e => { const p = evPos(e, $('#cvO')); const c = Math.floor(p.x / p.w * 5), r = Math.floor(p.y / p.h * 5); S.cur = Math.min(24, Math.max(0, r * 5 + c)); goStep(4); });
+$('#bToSt4').onclick = () => goStep(4);
+
+/* Passo 4: marcação dos furos */
+let CN = 480, cellBase = null, cellBaseFor = '', dragH = null, autoT = null;
+const cellW = () => distOf(S.cat) === 25 ? 24 : 23; // meia-janela em mm
+function enterCells() {
+  const cssW = $('#wrapT').clientWidth || 340;
+  CN = Math.max(360, Math.min(720, Math.round(cssW * DPR)));
+  const cv = $('#cvT'); cv.width = cv.height = CN; cv.style.width = cssW + 'px'; cv.style.height = cssW + 'px';
+  $('#chkAuto').checked = SET.autoNext;
+  cellBaseFor = ''; S.sel = Math.max(0, S.targets[S.cur].holes.length - 1); S.addMode = false;
+  drawCell(); updateCellUI();
+}
+function ensureCellBase() {
+  const t = S.targets[S.cur], key = [S.cur, t.adj.u, t.adj.v, S.pitchX, S.pitchY, CN, S.cat].join('|');
+  if (key === cellBaseFor) return;
+  const i = S.cur, c = i % 5, r = Math.floor(i / 5), W = cellW(), k = 2 * W / CN;
+  const img = renderRect(S.imgD, S.H, CN, (px, py) => [c + t.adj.u + (px * k - W) / S.pitchX, r + t.adj.v + (py * k - W) / S.pitchY]);
+  if (!cellBase) cellBase = document.createElement('canvas');
+  cellBase.width = cellBase.height = CN; cellBase.getContext('2d').putImageData(img, 0, 0); cellBaseFor = key;
+}
+// conversões: hole (u,v em unidades de grade, relativas ao centro previsto) <-> pixel do canvas
+function holeToPx(t, h) { const W = cellW(), s = CN / (2 * W); return [((h.u - t.adj.u) * S.pitchX + W) * s, ((h.v - t.adj.v) * S.pitchY + W) * s]; }
+function pxToHole(t, px, py) { const W = cellW(), k = 2 * W / CN; return { u: t.adj.u + (px * k - W) / S.pitchX, v: t.adj.v + (py * k - W) / S.pitchY }; }
+function drawCell() {
+  ensureCellBase();
+  const cv = $('#cvT'), ctx = cv.getContext('2d'), t = S.targets[S.cur], W = cellW(), s = CN / (2 * W), lw = CN / 480;
+  ctx.drawImage(cellBase, 0, 0);
+  drawRings(ctx, CN / 2, CN / 2, s, s, distOf(S.cat), lw);
+  const plugR = plugRadius(S.plug, S.calibre);
+  t.holes.forEach((h, j) => {
+    const [X, Y] = holeToPx(t, h), sel = j === S.sel;
+    ctx.save();
+    if (h.fse) ctx.setLineDash([6 * lw, 5 * lw]);
+    ctx.strokeStyle = h.fse ? '#999' : (sel ? '#ffcc33' : '#4ea1ff'); ctx.lineWidth = (sel ? 2.5 : 1.8) * lw;
+    ctx.beginPath(); ctx.arc(X, Y, plugR * s, 0, 7); ctx.stroke(); ctx.restore();
+    ctx.fillStyle = '#ff3b3b'; ctx.beginPath(); ctx.arc(X, Y, 2.2 * lw, 0, 7); ctx.fill();
+    if (t.holes.length > 1) { ctx.fillStyle = '#fff'; ctx.font = `bold ${14 * lw}px system-ui`; ctx.fillText(String(j + 1), X + plugR * s + 3, Y - 3); }
+  });
+  if (t.manual === '0') { ctx.fillStyle = 'rgba(255,60,60,.25)'; ctx.fillRect(0, 0, CN, CN); }
+}
+function scoreLabel(s) { if (s.pend) return '·'; if (s.x) return 'X'; return String(s.pts); }
+function updateCellUI() {
+  const R = computeAll(S), s = R.scores[S.cur], t = S.targets[S.cur];
+  $('#cellTitle').textContent = `Alvo ${S.cur + 1} de 25`;
+  $('#cellScore').textContent = scoreLabel(s);
+  const info = [];
+  if (s.pend) info.push('Toque no centro do furo.');
+  if (s.man) info.push(`Pontuação manual: ${t.manual === 'X' ? 'X' : t.manual}${t.manual === '0' ? ' (sem impacto / fora do quadrado)' : ''}.`);
+  if (!s.man && !s.pend && s.d != null) info.push(`Centro do furo a ${fmt(s.d, 2)} mm do centro do alvo.`);
+  if (!s.man && s.out5) info.push('<span style="color:var(--warn)">Fora do anel 5: vale 4 se estiver dentro do quadrado. Se estiver fora do quadrado, use “Sem impacto (0)”.</span>');
+  if (!s.man && s.duvP) info.push('<span style="color:var(--warn)">P · perto da linha: confira com a lupa/plug.</span>');
+  if (!s.man && s.duvX) info.push('<span style="color:var(--warn)">P · X no limite: confira com o plug.</span>');
+  if (s.dbl) info.push('<span style="color:var(--bad)">Dois tiros nesta caixa: vale a menor nota e −1 no cartão.</span>');
+  if (s.fse) info.push('Um furo desta caixa foi anulado (First Shot Error).');
+  if (S.addMode) info.push('<b>Toque no 2º furo.</b>');
+  $('#cellInfo').innerHTML = info.join(' ');
+  $('#selMan').value = t.manual || '';
+  $('#bAdd').classList.toggle('on', S.addMode);
+  $('#bPrev').disabled = S.cur === 0; $('#bNext').textContent = S.cur === 24 ? 'Concluir ▶' : 'Próximo ▶';
+  $('#miniGrid').innerHTML = R.scores.map((q, i) => {
+    const cls = [q.pend ? '' : q.man ? (q.pts === 0 ? 'zero' : 'man') : (q.duvP || q.duvX || q.out5) ? 'duv' : 'done', q.x ? 'xx' : '', i === S.cur ? 'cur' : ''].join(' ');
+    const mk = (q.dbl ? '2×' : '') + (q.fse ? 'F' : '') + (!q.man && (q.duvP || q.duvX) ? 'P' : '');
+    return `<button class="${cls}" data-i="${i}"><small>${i + 1}</small>${scoreLabel(q)}${mk ? `<i>${mk}</i>` : ''}</button>`;
+  }).join('');
+  $$('#miniGrid button').forEach(b => b.onclick = () => gotoCell(+b.dataset.i));
+  $('#totbar').innerHTML = `Total <b>${R.total}</b>/250 · <b>${R.x}</b> X` + (R.pen ? ` · pen. −${R.pen}` : '') + (R.pend ? ` · faltam ${R.pend}` : ' · ✔ 25/25');
+}
+function gotoCell(i) { clearTimeout(autoT); S.cur = i; S.addMode = false; S.sel = Math.max(0, S.targets[i].holes.length - 1); drawCell(); updateCellUI(); saveDraft(); const top = $('#st4').getBoundingClientRect().top + window.scrollY - $('header').offsetHeight - 6; if (Math.abs(window.scrollY - top) > 40) window.scrollTo({ top, behavior: 'smooth' }); }
+function cellLoupe(p) {
+  const lp = $('#loupeT'), ctx = lp.getContext('2d'), L = lp.width, cv = $('#cvT');
+  const k = CN / p.w, cx = p.x * k, cy = p.y * k, sw = (150 / 2.5) * k;
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, L, L);
+  ctx.drawImage(cv, cx - sw / 2, cy - sw / 2, sw, sw, 0, 0, L, L); crosshair(ctx, L);
+  placeLoupe(lp, p.x, p.y, $('#wrapT').clientWidth);
+}
+(() => {
+  const cv = $('#cvT');
+  cv.addEventListener('pointerdown', e => {
+    clearTimeout(autoT);
+    const p = evPos(e, cv), t = S.targets[S.cur], k = CN / p.w, px = p.x * k, py = p.y * k, s = CN / (2 * cellW());
+    let hit = -1;
+    t.holes.forEach((h, j) => { const [X, Y] = holeToPx(t, h); if (Math.hypot(X - px, Y - py) < 2.5 * s) hit = j; });
+    const wasEmpty = t.holes.length === 0;
+    if (hit >= 0 && !S.addMode) S.sel = hit;
+    else if (S.addMode || !t.holes.length) { t.holes.push(Object.assign(pxToHole(t, px, py), { fse: false })); S.sel = t.holes.length - 1; S.addMode = false; }
+    else Object.assign(t.holes[S.sel], pxToHole(t, px, py));
+    if (t.manual === '0' || t.manual === '4') t.manual = null;
+    dragH = { wasEmpty }; cv.setPointerCapture(e.pointerId);
+    drawCell(); cellLoupe(p); e.preventDefault();
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!dragH) return; const p = evPos(e, cv), t = S.targets[S.cur], k = CN / p.w;
+    Object.assign(t.holes[S.sel], pxToHole(t, p.x * k, p.y * k)); drawCell(); cellLoupe(p);
+  });
+  const end = () => {
+    if (!dragH) return; const was = dragH.wasEmpty; dragH = null;
+    $('#loupeT').style.display = 'none'; updateCellUI(); saveDraft();
+    if (was && SET.autoNext && S.cur < 24) autoT = setTimeout(() => gotoCell(S.cur + 1), 750);
+  };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+})();
+$('#bPrev').onclick = () => { if (S.cur > 0) gotoCell(S.cur - 1); };
+$('#bNext').onclick = () => { if (S.cur < 24) gotoCell(S.cur + 1); else goStep(5); };
+$('#bAdd').onclick = () => { if (!S.targets[S.cur].holes.length) { toast('Marque o 1º furo primeiro'); return; } S.addMode = !S.addMode; updateCellUI(); };
+$('#bDelHole').onclick = () => { const t = S.targets[S.cur]; if (!t.holes.length) return; t.holes.splice(S.sel, 1); S.sel = Math.max(0, t.holes.length - 1); drawCell(); updateCellUI(); saveDraft(); };
+$('#bZero').onclick = () => { const t = S.targets[S.cur]; t.manual = '0'; drawCell(); updateCellUI(); saveDraft(); if (SET.autoNext && S.cur < 24) autoT = setTimeout(() => gotoCell(S.cur + 1), 600); };
+$('#selMan').onchange = e => { S.targets[S.cur].manual = e.target.value || null; drawCell(); updateCellUI(); saveDraft(); };
+$('#chkAuto').onchange = e => { SET.autoNext = e.target.checked; saveSet(); };
+$$('[data-adj]').forEach(b => b.onclick = () => { const [dx, dy] = b.dataset.adj.split(',').map(Number), t = S.targets[S.cur]; t.adj.u += dx * 0.2 / S.pitchX; t.adj.v += dy * 0.2 / S.pitchY; drawCell(); updateCellUI(); saveDraft(); });
+$('#bAdjReset').onclick = () => { S.targets[S.cur].adj = { u: 0, v: 0 }; drawCell(); updateCellUI(); saveDraft(); };
+$('#bFse').onclick = () => {
+  const t = S.targets[S.cur], h = t.holes[S.sel]; if (!h) { toast('Marque o furo primeiro'); return; }
+  if (!h.fse && S.targets.some(tt => tt.holes.some(hh => hh.fse))) { toast('O First Shot Error já foi usado neste cartão'); return; }
+  h.fse = !h.fse; drawCell(); updateCellUI(); saveDraft();
+};
+$('#bToSt5').onclick = () => goStep(5);
+
+/* Passo 5: registro */
+function fillStep5() {
+  const R = computeAll(S), m = S.meta;
+  let h = `<div class="row" style="align-items:center"><div><h2 style="margin:0">Resultado</h2><span class="note">${S.cat} · ${dataBR(S.data)} · plug ${esc(PLUGS[S.plug].nome)}</span></div><div style="text-align:right"><div class="big">${R.total}</div><div>${R.x} X${R.pen ? ` · pen. −${R.pen}` : ''}</div></div></div>`;
+  h += scoreGridHTML(R.scores);
+  if (R.pend) h += `<div class="alert">${R.pend} alvo(s) sem furo marcado contam 0.</div>`;
+  const dv = R.duv.filter(d => d.p || d.x), o5 = R.duv.filter(d => d.o);
+  if (dv.length) h += `<div class="warn">Conferir com o plug: ${dv.map(d => `alvo ${d.i + 1}${d.x ? ' (X)' : ''}`).join(', ')}.</div>`;
+  if (o5.length) h += `<div class="warn">Fora do anel 5 (lançados como 4): alvo ${o5.map(d => d.i + 1).join(', ')}.</div>`;
+  h += '<h3>Agrupamento</h3>' + groupHTML(R.group);
+  h += '<p class="note">Leitura por foto é uma aproximação, não apuração oficial.</p>';
+  $('#resBox').innerHTML = h;
+  $('#mLocal').value = m.local || ''; $('#mProva').value = m.prova || '';
+  $('#mCarab').innerHTML = opts(EQ.carabinas.map(c => c.nome), m.carabina, '— escolher —');
+  $('#mLun').innerHTML = opts(EQ.lunetas.map(c => c.nome), m.luneta, '— escolher —');
+  $('#mProj').innerHTML = opts(EQ.projeteis.map(c => c.nome), m.projetil, '— escolher —');
+  $('#mApoio').innerHTML = opts(EQ.apoios.map(c => c.nome), m.apoio, '— escolher —');
+  $('#mPeso').value = m.peso ?? ''; $('#mForm').value = m.formatacao || '';
+  $('#mBota').checked = !!m.bota; $('#mBolsa').checked = !!m.bolsinha;
+  $('#mVel').value = m.vel ?? ''; $('#mVelU').value = m.velUnit || 'ms'; $('#mDp').value = m.dp ?? ''; $('#mEs').value = m.es ?? '';
+  $('#mClima').value = m.clima || ''; $('#mVento').value = m.vento || ''; $('#mTemp').value = m.temp ?? ''; $('#mObs').value = m.obs || '';
+  updEnergy();
+}
+function scoreGridHTML(scores) {
+  return '<div class="grid5 mt">' + scores.map((q, i) => {
+    const cls = [q.pend ? '' : q.man ? (q.pts === 0 ? 'zero' : 'man') : (q.duvP || q.duvX || q.out5) ? 'duv' : 'done', q.x ? 'xx' : ''].join(' ');
+    const mk = (q.dbl ? '2×' : '') + (q.fse ? 'F' : '') + (!q.man && (q.duvP || q.duvX) ? 'P' : '');
+    return `<div class="${cls}"><small>${i + 1}</small>${scoreLabel(q)}${mk ? `<i>${mk}</i>` : ''}</div>`;
+  }).join('') + '</div><p class="note">Verde = lido · amarelo = conferir (P) · roxo = manual · vermelho = 0 · 2× = dois tiros · F = First Shot Error</p>';
+}
+function readMeta() {
+  const m = S.meta;
+  m.local = $('#mLocal').value.trim(); m.prova = $('#mProva').value.trim();
+  m.carabina = $('#mCarab').value; m.luneta = $('#mLun').value; m.projetil = $('#mProj').value; m.apoio = $('#mApoio').value;
+  m.peso = num($('#mPeso').value); m.formatacao = $('#mForm').value.trim(); m.bota = $('#mBota').checked; m.bolsinha = $('#mBolsa').checked;
+  m.vel = num($('#mVel').value); m.velUnit = $('#mVelU').value; m.dp = num($('#mDp').value); m.es = num($('#mEs').value);
+  m.clima = $('#mClima').value.trim(); m.vento = $('#mVento').value.trim(); m.temp = num($('#mTemp').value); m.obs = $('#mObs').value;
+  m.energia = energyJ(m.vel, m.velUnit, m.peso);
+}
+function updEnergy() { readMeta(); $('#energyOut').innerHTML = energyHTML(S.cat, S.meta.energia); saveDraft(); }
+$('#mCarab').onchange = () => {
+  const c = EQ.carabinas.find(x => x.nome === $('#mCarab').value);
+  if (c) { if (c.luneta && EQ.lunetas.some(l => l.nome === c.luneta)) $('#mLun').value = c.luneta; if (c.calibre && CALIBRES[c.calibre] && c.calibre !== S.calibre) toast(`Atenção: ${c.nome} é ${CALIBRES[c.calibre].nome}, cartão lido como ${CALIBRES[S.calibre].nome}`, 4000); }
+  updEnergy();
+};
+$('#mProj').onchange = () => { const p = EQ.projeteis.find(x => x.nome === $('#mProj').value); if (p && p.peso) $('#mPeso').value = p.peso; updEnergy(); };
+['#mPeso', '#mVel', '#mVelU', '#mDp', '#mEs', '#mLun', '#mApoio', '#mBota', '#mBolsa', '#mLocal', '#mProva', '#mForm', '#mClima', '#mVento', '#mTemp', '#mObs'].forEach(s => $(s).addEventListener('change', updEnergy));
+$('#bSave').onclick = async () => {
+  readMeta();
+  const R = computeAll(S);
+  if (R.pend && !confirm(`${R.pend} alvo(s) sem furo marcado contarão 0. Salvar assim mesmo?`)) return;
+  // miniatura da grade corrigida com os furos
+  const CP = 80, c = document.createElement('canvas'); c.width = c.height = CP * 5; const x = c.getContext('2d');
+  x.putImageData(renderRect(S.imgD, S.H, CP * 5, (px, py) => [-0.5 + px / CP, -0.5 + py / CP]), 0, 0); overlayOverview(x, S, CP, 0.8);
+  const rec = serial(S);
+  rec.id = S.id || uid(); rec.created = S.created || Date.now(); rec.updated = Date.now();
+  rec.thumb = c.toDataURL('image/jpeg', 0.82);
+  rec.res = { total: R.total, x: R.x, pen: R.pen, pend: R.pend, scores: R.scores.map(q => q.x ? 'X' : q.pts) };
+  delete rec.cur; delete rec.step;
+  try {
+    await DB.put(rec); await DB.mdel('draft');
+    SET.local = S.meta.local || SET.local; SET.velUnit = S.meta.velUnit; saveSet();
+    await reloadCards(); toast(`Cartão salvo: ${R.total} · ${R.x} X`);
+    newSession(); goStep(1); $('#draftBanner').hidden = true;
+  } catch (e) { toast('Erro ao salvar: ' + e.message, 5000); }
+};
+$('#bDiscard').onclick = async () => { if (!confirm('Descartar este cartão? A leitura será perdida.')) return; await DB.mdel('draft').catch(() => {}); newSession(); goStep(1); };
+
+/* ---------- 6. Telas ---------- */
+function showTab(name) {
+  $$('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
+  $$('.tab').forEach(s => s.classList.toggle('on', s.id === 'tab-' + name));
+  ({ hist: renderHist, evo: renderEvo, comp: renderComp, calor: renderHeat, equip: renderEquip, backup: renderBackup })[name]?.();
+  window.scrollTo(0, 0);
+}
+$$('#tabs button').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+const catOpts = (sel, all = 'Todas') => opts(Object.keys(CATS), sel, all);
+const uniq = a => [...new Set(a.filter(Boolean))].sort();
+
+/* Histórico */
+function filtered(cat, carab, proj) { return CARDS.filter(c => (!cat || c.cat === cat) && (!carab || c.meta.carabina === carab) && (!proj || c.meta.projetil === proj)); }
+function renderHist() {
+  $('#histDetail').hidden = true; $('#histList').hidden = false;
+  const fc = $('#hCat').value, fa = $('#hCarab').value, fp = $('#hProj').value;
+  $('#hCat').innerHTML = catOpts(fc);
+  $('#hCarab').innerHTML = opts(uniq(CARDS.map(c => c.meta.carabina)), fa, 'Todas');
+  $('#hProj').innerHTML = opts(uniq(CARDS.map(c => c.meta.projetil)), fp, 'Todos');
+  const list = filtered(fc, fa, fp);
+  $('#histItems').innerHTML = list.length ? list.map(c => `<div class="item" data-id="${c.id}"><img src="${c.thumb || ''}" alt=""><div style="flex:1;min-width:0"><b>${dataBR(c.data)}</b> <span class="pill">${c.cat}</span><br><span class="note">${esc(c.meta.carabina || '—')} · ${esc(c.meta.projetil || '—')}${c.meta.prova ? ' · ' + esc(c.meta.prova) : ''}</span></div><div class="sc">${c.res.total}<div class="note" style="text-align:right">${c.res.x} X</div></div></div>`).join('') + `<p class="note">${list.length} cartão(ões).</p>` : '<p class="note">Nenhum cartão salvo ainda.</p>';
+  $$('#histItems .item').forEach(el => el.onclick = () => showDetail(el.dataset.id));
+}
+['#hCat', '#hCarab', '#hProj'].forEach(s => $(s).onchange = renderHist);
+function equipRows(rec) {
+  const m = rec.meta;
+  return `<table>
+   <tr><th>Data / local</th><td>${dataBR(rec.data)} · ${esc(m.local)}${m.prova ? ' · ' + esc(m.prova) : ''}</td></tr>
+   <tr><th>Categoria</th><td>${rec.cat} · ${CATS[rec.cat].nome} · ${CALIBRES[rec.calibre]?.nome || rec.calibre} · plug ${esc(PLUGS[rec.plug].nome)}</td></tr>
+   <tr><th>Carabina</th><td>${esc(m.carabina || '—')}</td></tr>
+   <tr><th>Luneta</th><td>${esc(m.luneta || '—')}</td></tr>
+   <tr><th>Chumbinho / munição</th><td>${esc(m.projetil || '—')}${m.peso ? ` · ${fmt(m.peso, 2)} gr` : ''}${m.formatacao ? ' · ' + esc(m.formatacao) : ''}</td></tr>
+   <tr><th>Apoio</th><td>${esc(m.apoio || '—')}${m.bota ? ' · bota' : ''}${m.bolsinha ? ' · bolsinha' : ''}</td></tr>
+   <tr><th>Velocidade</th><td>${m.vel ? `${fmt(m.vel, 1)} ${m.velUnit === 'fps' ? 'fps' : 'm/s'} · DP ${fmt(m.dp, 1)} · ES ${fmt(m.es, 1)}` : '—'}${m.energia ? ` · <b>${fmt(m.energia, 2)} J</b>` : ''}</td></tr>
+   <tr><th>Condições</th><td>${esc([m.clima, m.vento, m.temp != null && m.temp !== '' ? fmt(m.temp, 1) + ' °C' : ''].filter(Boolean).join(' · ') || '—')}</td></tr>
+   ${m.obs ? `<tr><th>Observações</th><td>${esc(m.obs).replace(/\n/g, '<br>')}</td></tr>` : ''}
+  </table>`;
+}
+function showDetail(id) {
+  const rec = CARDS.find(c => c.id === id); if (!rec) return;
+  const R = computeAll(rec);
+  $('#histList').hidden = true; const d = $('#histDetail'); d.hidden = false;
+  d.innerHTML = `<div class="box">
+   <button class="btn sm" id="dBack">◀ Histórico</button>
+   <div class="row mt" style="align-items:center"><div><h2 style="margin:0">${dataBR(rec.data)} · ${rec.cat}</h2><span class="note">${esc(rec.meta.carabina || '')}</span></div><div style="text-align:right"><div class="big">${R.total}</div><div>${R.x} X${R.pen ? ` · pen. −${R.pen}` : ''}</div></div></div>
+   ${scoreGridHTML(R.scores)}
+   ${rec.thumb ? `<img src="${rec.thumb}" style="width:100%;border-radius:10px;margin-top:8px" alt="grade">` : ''}
+   <h3>Agrupamento</h3>${groupHTML(R.group)}
+   <h3>Registro</h3>${equipRows(rec)}
+   ${rec.meta.energia ? energyHTML(rec.cat, rec.meta.energia) : ''}
+   <div class="row mt"><button class="btn sm" id="dPrint">🖨️ Relatório</button><button class="btn sm" id="dCard">🖨️ Card 9×13</button></div>
+   <div class="row mt"><button class="btn sm" id="dPhoto">📷 Ver foto</button><button class="btn sm pri" id="dEdit">✎ Reabrir leitura</button></div>
+   <button class="btn sm bad mt" id="dDel">Excluir cartão</button>
+   <div id="dPhotoBox" class="mt"></div>
+   <p class="note">Leitura por foto é uma aproximação, não apuração oficial.</p></div>`;
+  $('#dBack').onclick = renderHist;
+  $('#dPrint').onclick = () => printRec(rec, 'rel');
+  $('#dCard').onclick = () => printRec(rec, 'card');
+  $('#dPhoto').onclick = () => { $('#dPhotoBox').innerHTML = `<img src="${rec.photo}" style="width:100%;border-radius:10px" alt="foto">`; };
+  $('#dDel').onclick = async () => { if (!confirm('Excluir este cartão definitivamente?')) return; await DB.del(rec.id); await reloadCards(); toast('Cartão excluído'); renderHist(); };
+  $('#dEdit').onclick = async () => { await restoreSession(rec); S.cur = 0; showTab('novo'); goStep(4); };
+  window.scrollTo(0, 0);
+}
+
+/* Evolução */
+function renderEvo() {
+  const sel = $('#eCat').value || (CARDS[0]?.cat || SET.cat);
+  $('#eCat').innerHTML = opts(Object.keys(CATS), sel);
+  const list = CARDS.filter(c => c.cat === sel).slice().sort((a, b) => (a.data || '').localeCompare(b.data || '') || a.created - b.created);
+  const cv = $('#cvE'), W = cv.clientWidth || 340, H = Math.round(W * 0.55);
+  cv.width = W * DPR; cv.height = H * DPR; cv.style.height = H + 'px';
+  const ctx = cv.getContext('2d'); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.fillStyle = '#0b0e13'; ctx.fillRect(0, 0, W, H);
+  if (!list.length) { ctx.fillStyle = '#9aa6b6'; ctx.font = '14px system-ui'; ctx.fillText('Sem cartões nesta categoria.', 16, 30); $('#evoStats').innerHTML = ''; return; }
+  const ys = list.map(c => c.res.total), lo = Math.min(Math.floor((Math.min(...ys) - 5) / 5) * 5, 230), hi = 250;
+  const L = 36, Rm = 10, T = 12, B = 26, gx = i => L + (list.length === 1 ? (W - L - Rm) / 2 : i * (W - L - Rm) / (list.length - 1)), gy = v => T + (hi - v) * (H - T - B) / (hi - lo);
+  ctx.font = '11px system-ui'; ctx.fillStyle = '#9aa6b6'; ctx.strokeStyle = '#2a3240'; ctx.lineWidth = 1;
+  for (let v = lo; v <= hi; v += 5) { ctx.beginPath(); ctx.moveTo(L, gy(v)); ctx.lineTo(W - Rm, gy(v)); ctx.stroke(); ctx.fillText(v, 4, gy(v) + 4); }
+  ctx.strokeStyle = '#3ecf8e'; ctx.setLineDash([6, 4]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(L, gy(META)); ctx.lineTo(W - Rm, gy(META)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#3ecf8e'; ctx.fillText('meta 245', W - Rm - 56, gy(META) - 5);
+  ctx.strokeStyle = '#ffcc33'; ctx.lineWidth = 2; ctx.beginPath(); list.forEach((c, i) => i ? ctx.lineTo(gx(i), gy(c.res.total)) : ctx.moveTo(gx(i), gy(c.res.total))); ctx.stroke();
+  list.forEach((c, i) => { ctx.fillStyle = c.res.total >= META ? '#3ecf8e' : '#ffcc33'; ctx.beginPath(); ctx.arc(gx(i), gy(c.res.total), 4, 0, 7); ctx.fill(); });
+  ctx.fillStyle = '#9aa6b6'; ctx.fillText(dataBR(list[0].data), L, H - 8); if (list.length > 1) { const t = dataBR(list[list.length - 1].data); ctx.fillText(t, W - Rm - ctx.measureText(t).width, H - 8); }
+  const avg = ys.reduce((a, b) => a + b, 0) / ys.length, last5 = ys.slice(-5), a5 = last5.reduce((a, b) => a + b, 0) / last5.length;
+  $('#evoStats').innerHTML = `<table><tr><th>Cartões</th><td>${list.length}</td></tr><tr><th>Média</th><td>${fmt(avg, 1)}</td></tr><tr><th>Média dos últimos 5</th><td>${fmt(a5, 1)}</td></tr><tr><th>Melhor</th><td>${Math.max(...ys)}</td></tr><tr><th>Falta para a meta</th><td>${Math.max(0, META - Math.max(...ys))} pontos (melhor) · ${fmt(Math.max(0, META - a5), 1)} (média recente)</td></tr><tr><th>X médio</th><td>${fmt(list.reduce((a, c) => a + c.res.x, 0) / list.length, 1)}</td></tr></table>`;
+}
+$('#eCat').onchange = renderEvo;
+
+/* Comparativos */
+function renderComp() {
+  const cat = $('#cCat').value, by = $('#cBy').value || 'cpl';
+  $('#cCat').innerHTML = catOpts(cat);
+  const keyOf = c => { const m = c.meta, a = []; if (by.includes('c')) a.push(m.carabina || '—'); if (by.includes('p')) a.push(m.projetil || '—'); if (by.includes('l')) a.push(m.luneta || '—'); return a.join(' × '); };
+  const g = {};
+  CARDS.filter(c => !cat || c.cat === cat).forEach(c => { const k = keyOf(c); (g[k] = g[k] || []).push(c); });
+  const rows = Object.entries(g).map(([k, a]) => ({ k, n: a.length, avg: a.reduce((s, c) => s + c.res.total, 0) / a.length, best: Math.max(...a.map(c => c.res.total)), x: a.reduce((s, c) => s + c.res.x, 0) / a.length })).sort((a, b) => b.avg - a.avg);
+  $('#compOut').innerHTML = rows.length ? `<table><tr><th>Combinação</th><th>N</th><th>Média</th><th>Melhor</th><th>X méd.</th></tr>${rows.map(r => `<tr><td>${esc(r.k)}</td><td>${r.n}</td><td><b>${fmt(r.avg, 1)}</b></td><td>${r.best}</td><td>${fmt(r.x, 1)}</td></tr>`).join('')}</table><p class="note">Meta: 245+. Com poucos cartões a média ainda oscila bastante.</p>` : '<p class="note">Sem cartões para comparar.</p>';
+}
+$('#cCat').onchange = renderComp; $('#cBy').onchange = renderComp;
+
+/* Mapa de calor */
+function renderHeat() {
+  const dist = +$('#mcDist').value || 25, cat = $('#mcCat').value, ca = $('#mcCarab').value, pr = $('#mcProj').value, nLast = +$('#mcN').value;
+  $('#mcCat').innerHTML = opts(Object.keys(CATS).filter(k => CATS[k].dist === dist), cat, 'Todas');
+  $('#mcCarab').innerHTML = opts(uniq(CARDS.map(c => c.meta.carabina)), ca, 'Todas');
+  $('#mcProj').innerHTML = opts(uniq(CARDS.map(c => c.meta.projetil)), pr, 'Todos');
+  let list = CARDS.filter(c => distOf(c.cat) === dist && (!cat || c.cat === cat) && (!ca || c.meta.carabina === ca) && (!pr || c.meta.projetil === pr));
+  if (nLast) list = list.slice(0, nLast);
+  const cv = $('#cvH'), ctx = cv.getContext('2d'), N = cv.width, W = 22, s = N / (2 * W);
+  ctx.fillStyle = '#f4f1e8'; ctx.fillRect(0, 0, N, N);
+  RINGS[dist].slice().reverse().forEach(([p, r]) => { ctx.strokeStyle = r === CAL_RING[dist] ? '#2f6fb8' : '#555'; ctx.lineWidth = r === CAL_RING[dist] ? 4 : 1.2; ctx.beginPath(); ctx.arc(N / 2, N / 2, r * s, 0, 7); ctx.stroke(); ctx.fillStyle = '#777'; ctx.font = '13px system-ui'; ctx.fillText(p, N / 2 + r * s - 16, N / 2 - 3); });
+  ctx.fillStyle = '#c33'; ctx.beginPath(); ctx.arc(N / 2, N / 2, Math.max((dist === 25 ? X25_RING : X50_RING) * s, 2), 0, 7); ctx.fill();
+  const all = [];
+  list.forEach(c => { const R = computeAll(c), cr = (CALIBRES[c.calibre] || CALIBRES['4.5']).r; R.holes.forEach(h => all.push({ ...h, cr })); });
+  ctx.globalCompositeOperation = 'multiply';
+  all.forEach(h => { ctx.fillStyle = 'rgba(220,40,30,.22)'; ctx.beginPath(); ctx.arc(N / 2 + h.x * s, N / 2 + h.y * s, h.cr * s, 0, 7); ctx.fill(); });
+  ctx.globalCompositeOperation = 'source-over';
+  all.forEach(h => { ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(N / 2 + h.x * s, N / 2 + h.y * s, 1.8, 0, 7); ctx.fill(); });
+  const g = groupStats(all);
+  if (g) { const X = N / 2 + g.cx * s, Y = N / 2 + g.cy * s; ctx.strokeStyle = '#0a8'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(X - 14, Y); ctx.lineTo(X + 14, Y); ctx.moveTo(X, Y - 14); ctx.lineTo(X, Y + 14); ctx.stroke(); ctx.beginPath(); ctx.arc(X, Y, g.mr * s, 0, 7); ctx.stroke(); }
+  $('#heatStats').innerHTML = `<p class="note">${list.length} cartão(ões), ${all.length} furos. Cruz verde = centro médio; círculo verde = raio médio.</p>` + (g ? groupHTML(g) : '');
+}
+['#mcDist', '#mcCat', '#mcCarab', '#mcProj', '#mcN'].forEach(s => $(s).onchange = renderHeat);
+
+/* ---------- 7. Equipamentos, backup, CSV, impressão ---------- */
+const EQ_DEF = {
+  carabinas: { t: 'Carabinas', f: [['nome', 'Nome'], ['tipo', 'Tipo (PCP, Spring, .22 LR)'], ['calibre', 'Calibre (4.5, 5.5, 22)'], ['luneta', 'Luneta padrão'], ['cat', 'Categoria típica'], ['obs', 'Observações']] },
+  lunetas: { t: 'Lunetas', f: [['nome', 'Nome'], ['obs', 'Observações']] },
+  projeteis: { t: 'Chumbinhos e munições', f: [['nome', 'Nome'], ['peso', 'Peso (gr)'], ['calibre', 'Calibre'], ['obs', 'Observações (formatação, uso)']] },
+  apoios: { t: 'Apoios', f: [['nome', 'Descrição (frontrest + rearest)'], ['obs', 'Observações']] },
+};
+const eqEdit = {};
+function renderEquip() {
+  $('#equipOut').innerHTML = Object.entries(EQ_DEF).map(([k, d]) => {
+    const ed = eqEdit[k] ? EQ[k].find(x => x.id === eqEdit[k]) : null;
+    return `<div class="box"><h2>${d.t}</h2>${EQ[k].map(it => `<div class="eqi"><div><b>${esc(it.nome)}</b><br><small>${d.f.slice(1).map(([f]) => it[f]).filter(v => v !== '' && v != null).map(esc).join(' · ')}</small></div><button class="btn sm" data-ed="${k},${it.id}">✎</button><button class="btn sm bad" data-rm="${k},${it.id}">×</button></div>`).join('')}
+    <h3>${ed ? 'Editar' : 'Adicionar'}</h3>${d.f.map(([f, l]) => `<label>${l}</label><input data-f="${k},${f}" value="${esc(ed ? ed[f] ?? '' : '')}"${f === 'luneta' ? ' list="dlLun"' : ''}>`).join('')}
+    <div class="row mt"><button class="btn sm pri" data-add="${k}">${ed ? 'Salvar alterações' : '+ Adicionar'}</button>${ed ? `<button class="btn sm" data-cancel="${k}">Cancelar</button>` : ''}</div></div>`;
+  }).join('') + `<datalist id="dlLun">${EQ.lunetas.map(l => `<option value="${esc(l.nome)}">`).join('')}</datalist>`;
+  $$('[data-rm]').forEach(b => b.onclick = () => { const [k, id] = b.dataset.rm.split(','); const it = EQ[k].find(x => x.id === id); if (!confirm(`Remover "${it.nome}"? Os cartões já salvos não mudam.`)) return; EQ[k] = EQ[k].filter(x => x.id !== id); saveEq(); renderEquip(); });
+  $$('[data-ed]').forEach(b => b.onclick = () => { const [k, id] = b.dataset.ed.split(','); eqEdit[k] = id; renderEquip(); });
+  $$('[data-cancel]').forEach(b => b.onclick = () => { delete eqEdit[b.dataset.cancel]; renderEquip(); });
+  $$('[data-add]').forEach(b => b.onclick = () => {
+    const k = b.dataset.add, o = {};
+    $$(`[data-f^="${k},"]`).forEach(i => { const f = i.dataset.f.split(',')[1]; o[f] = f === 'peso' ? num(i.value) : i.value.trim(); });
+    if (!o.nome) { toast('Informe o nome'); return; }
+    if (eqEdit[k]) { Object.assign(EQ[k].find(x => x.id === eqEdit[k]), o); delete eqEdit[k]; } else EQ[k].push(Object.assign({ id: uid() }, o));
+    saveEq(); renderEquip(); toast('Salvo');
+  });
+}
+
+async function renderBackup() {
+  let t = `${CARDS.length} cartão(ões) salvos.`;
+  try { const e = await navigator.storage?.estimate?.(); if (e) t += ` Espaço usado: ${fmt(e.usage / 1048576, 1)} MB.`; } catch (e) {}
+  $('#storeInfo').textContent = t;
+}
+$('#bBackup').onclick = async () => {
+  await reloadCards();
+  const data = { app: 'WRABF-Alvos', versao: 1, exportado: new Date().toISOString(), settings: SET, equip: EQ, cards: CARDS };
+  download(`WRABF-Alvos-backup-${today()}.json`, JSON.stringify(data), 'application/json');
+};
+$('#inRestore').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const data = JSON.parse(await f.text());
+    if (data.app !== 'WRABF-Alvos' || !Array.isArray(data.cards)) throw new Error('arquivo não é um backup deste app');
+    const mode = $('#restMode').value;
+    if (mode === 'replace' && !confirm('Substituir TODOS os dados deste aparelho pelo backup?')) return;
+    if (mode === 'replace') { await DB.clear(); EQ = data.equip || EQ; Object.assign(SET, data.settings || {}); saveSet(); }
+    else if (data.equip) for (const k of Object.keys(EQ_DEF)) for (const it of data.equip[k] || []) if (!EQ[k].some(x => x.nome === it.nome)) EQ[k].push(it);
+    saveEq();
+    for (const c of data.cards) await DB.put(c);
+    await reloadCards(); renderBackup(); toast(`Backup restaurado: ${data.cards.length} cartão(ões)`);
+  } catch (err) { toast('Não consegui restaurar: ' + err.message, 5000); }
+};
+$('#bCsv').onclick = () => {
+  const cell = v => { if (v == null) return ''; if (typeof v === 'number') v = String(Math.round(v * 1000) / 1000).replace('.', ','); v = String(v); return /[;"\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const head = ['data', 'local', 'categoria', 'prova', 'carabina', 'luneta', 'projetil', 'peso_gr', 'formatacao', 'apoio', 'bota', 'bolsinha', 'calibre', 'plug', 'vel', 'unid_vel', 'dp', 'es', 'energia_J', 'clima', 'vento', 'temp_C', 'total', 'X', 'penalidade', 'pendentes', 'grupo_dx_mm', 'grupo_dy_mm', 'raio_medio_mm', 'ES_mm', 'fliers', 'obs'];
+  for (let i = 1; i <= 25; i++) head.push('a' + i);
+  const lines = [head.join(';')];
+  CARDS.slice().reverse().forEach(c => {
+    const m = c.meta, R = computeAll(c), g = R.group || {};
+    const row = [dataBR(c.data), m.local, c.cat, m.prova, m.carabina, m.luneta, m.projetil, m.peso, m.formatacao, m.apoio, m.bota ? 'sim' : '', m.bolsinha ? 'sim' : '', CALIBRES[c.calibre]?.nome, PLUGS[c.plug].nome, m.vel, m.velUnit === 'fps' ? 'fps' : 'm/s', m.dp, m.es, m.energia, m.clima, m.vento, m.temp, R.total, R.x, R.pen, R.pend, g.cx, g.cy, g.mr, g.es, (g.fliers || []).join(' '), m.obs];
+    R.scores.forEach(s => row.push(s.pend ? '' : s.x ? 'X' : s.pts));
+    lines.push(row.map(cell).join(';'));
+  });
+  download(`WRABF-Alvos-${today()}.csv`, new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+};
+$('#bWipe').onclick = async () => {
+  if (!confirm('Apagar TODOS os cartões, equipamentos e ajustes deste aparelho?')) return;
+  if (!confirm('Tem certeza? Sem backup, não há como recuperar.')) return;
+  await DB.clear(); await DB.mdel('draft'); localStorage.removeItem('wrabf.settings'); localStorage.removeItem('wrabf.equip'); location.reload();
+};
+
+function printRec(rec, mode) {
+  const R = computeAll(rec), m = rec.meta;
+  const grid = `<table class="g5">${[0, 1, 2, 3, 4].map(r => `<tr>${[0, 1, 2, 3, 4].map(c => { const i = r * 5 + c, s = R.scores[i]; return `<td><small>${i + 1}</small>${scoreLabel(s)}${s.dbl ? '*' : ''}</td>`; }).join('')}</tr>`).join('')}</table>`;
+  let h;
+  if (mode === 'card') {
+    h = `<div class="pr pc"><h1>${rec.cat} · ${dataBR(rec.data)}</h1><div class="sub">${esc(m.local)}${m.prova ? ' · ' + esc(m.prova) : ''}</div>${grid}
+    <div class="tot">${R.total}/250 · ${R.x} X${R.pen ? ` · pen. −${R.pen}` : ''}</div>
+    <table><tr><th>Carabina</th><td>${esc(m.carabina || '—')}</td></tr><tr><th>Luneta</th><td>${esc(m.luneta || '—')}</td></tr><tr><th>Projétil</th><td>${esc(m.projetil || '—')}${m.peso ? ` ${fmt(m.peso, 2)} gr` : ''}</td></tr>${m.energia ? `<tr><th>Energia</th><td>${fmt(m.energia, 2)} J</td></tr>` : ''}${R.group ? `<tr><th>Grupo</th><td>${dirTxt(R.group.cx, R.group.cy)} · r ${fmt(R.group.mr, 2)} · ES ${fmt(R.group.es, 2)} mm</td></tr>` : ''}</table>
+    <div class="disc">NSN WRABF · leitura por foto, aproximação (não oficial).</div></div>`;
+  } else {
+    h = `<div class="pr"><h1>NSN WRABF · Relatório do cartão</h1><div class="sub">${rec.cat} · ${CATS[rec.cat].nome} · ${dataBR(rec.data)} · ${esc(m.local)}${m.prova ? ' · ' + esc(m.prova) : ''}</div>
+    <div style="display:flex;gap:10pt"><div style="flex:1">${grid}<div class="tot">${R.total}/250 · ${R.x} X${R.pen ? ` · penalidade −${R.pen}` : ''}</div></div>${rec.thumb ? `<div style="flex:1"><img src="${rec.thumb}"></div>` : ''}</div>
+    ${equipRows(rec).replace('<table>', '<table>')}
+    <h3 style="font-size:11pt;margin:6pt 0 2pt">Agrupamento</h3>${groupHTML(R.group)}
+    <div class="disc">Pontuação pela melhor borda com o plug ${esc(PLUGS[rec.plug].nome)} (raio ${fmt(R.plugR, 3)} mm). * = dois tiros na caixa. Leitura por foto é uma aproximação, não apuração oficial. Gerado em ${new Date().toLocaleString('pt-BR')}.</div></div>`;
+  }
+  $('#printArea').innerHTML = h;
+  $('#pageStyle').textContent = mode === 'card' ? '@page{size:90mm 130mm;margin:4mm}' : '@page{size:A4;margin:12mm}';
+  setTimeout(() => window.print(), 250);
+}
+
+/* ---------- 8. Modo B (gancho para a detecção automática) ----------
+   Quando o pipeline OpenCV.js for portado (ver seção 5 do documento),
+   AutoDetect.run(S) deve preencher S.targets[i].holes com {u, v, fse:false, auto:true}
+   em unidades de grade; o passo 4 continua sendo a conferência pelo usuário. */
+const AutoDetect = { available: false, async run(st) { return null; } };
+
+/* ---------- Ícone, manifesto e inicialização ---------- */
+function makeIcon(sz) {
+  const c = document.createElement('canvas'); c.width = c.height = sz; const x = c.getContext('2d'), m = sz / 2;
+  x.fillStyle = '#0e1116'; x.fillRect(0, 0, sz, sz);
+  [[.42, '#f4f1e8'], [.32, '#2f6fb8'], [.26, '#f4f1e8'], [.15, '#222'], [.05, '#ffcc33']].forEach(([r, col]) => { x.fillStyle = col; x.beginPath(); x.arc(m, m, r * sz, 0, 7); x.fill(); });
+  return c.toDataURL('image/png');
+}
+function setupPWA() {
+  const i192 = makeIcon(192), i512 = makeIcon(512);
+  $('#touchIcon').href = makeIcon(180);
+  const base = location.href.split('#')[0].split('?')[0];
+  const man = { name: 'NSN WRABF · Alvos', short_name: 'WRABF Alvos', start_url: base, scope: base.replace(/[^/]*$/, ''), display: 'standalone', background_color: '#0e1116', theme_color: '#0e1116', icons: [{ src: i192, sizes: '192x192', type: 'image/png' }, { src: i512, sizes: '512x512', type: 'image/png' }] };
+  $('#manifestLink').href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(man));
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+window.addEventListener('resize', () => { if (S && S.step === 2) drawCorners(); });
+(async function init() {
+  setupPWA();
+  try { await DB.open(); await reloadCards(); } catch (e) { toast('Armazenamento do aparelho indisponível', 5000); }
+  newSession(); goStep(1);
+  try {
+    const d = await DB.mget('draft');
+    if (d && d.photo) {
+      $('#draftBanner').hidden = false;
+      $('#bDraftGo').onclick = async () => { await restoreSession(d); $('#draftBanner').hidden = true; goStep(Math.max(2, Math.min(5, d.step || 2))); };
+      $('#bDraftDrop').onclick = async () => { await DB.mdel('draft'); $('#draftBanner').hidden = true; };
+    }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
